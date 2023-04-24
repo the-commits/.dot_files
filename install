@@ -26,7 +26,7 @@ ln -sf $DOT_FILES/bash/.bash_logout $HOME/.bash_logout
 if [ -f $HOME/.tmux.conf ]; then
 	rm $HOME/.tmux.conf
 fi
-ln -sf $DOTFILES/tmux/tmux.conf $HOME/.tmux.conf
+ln -sf $DOT_FILES/tmux/tmux.conf $HOME/.tmux.conf
 
 # Kitty
 if [ -d $CONFIG_PATH/kitty ]; then
@@ -34,3 +34,6 @@ if [ -d $CONFIG_PATH/kitty ]; then
 fi
 ln -sf $DOT_FILES/kitty $CONFIG_PATH
 
+# Scripts
+mkdir -p $HOME/.local/bin
+ln -sf $DOT_FILES/scripts/t $HOME/.local/bin/t
