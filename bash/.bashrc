@@ -85,6 +85,10 @@ _open_files_for_editing() {
 # alias pacdiff=eos-pacdiff
 ################################################################################
 
+# Brew
+[ -d /home/linuxbrew/.linuxbrew ] && eval $(/home/linuxbrew/.linuxbrew/bin/brew shellenv)
+ mkdir -p /home/linuxbrew/.linuxbrew/var/homebrew/linked
+ chown -R $(whoami) /home/linuxbrew/.linuxbrew/var/homebrew/linked
 
 
 # NeoVim
@@ -117,6 +121,3 @@ else
 fi
 unset __conda_setup
 # <<< conda initialize <<<
-
-
-
