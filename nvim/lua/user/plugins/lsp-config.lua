@@ -11,7 +11,15 @@ require('lspconfig').volar.setup({
   filetypes = { 'typescript', 'javascript', 'javascriptreact', 'typescriptreact', 'vue' }
 })
 require('lspconfig').tailwindcss.setup({ capabilities = capabilities })
-
+require('lspconfig').haxe_language_server.setup({
+    capabilities = capabilities,
+    settings = {
+    filetypes = {
+      "haxe",
+      "hx",
+    }
+  },
+  })
 -- JSON
 require('lspconfig').jsonls.setup({
   capabilities = capabilities,
