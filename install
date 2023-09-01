@@ -3,15 +3,6 @@
 DOT_FILES=$(cd $(dirname "${BASH_SOURCE[0]}") && pwd)
 CONFIG_PATH=$HOME/.config
 
-# Install Rust
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-
-##############################
-# JetBrains Mono Fonts		 #
-##############################
-mkdir -p $HOME/.local/share/fonts/JetBrainsMono
-unzip -d $HOME/.local/share/fonts/JetBrainsMono $DOT_FILES/fonts/JetBrainsMono.zip
-
 # Bash
 if [ -f $HOME/.bashrc ]; then
 	rm $HOME/.bashrc
@@ -26,35 +17,45 @@ fi
 ln -sf $DOT_FILES/bash/.bashrc $HOME/.bashrc
 ln -sf $DOT_FILES/bash/.bash_profile $HOME/.bash_profile
 ln -sf $DOT_FILES/bash/.bash_logout $HOME/.bash_logout
+source $DOT_FILES/bash/.bashrc $HOME/.bashrc
 
-# tmux
-if [ -f $HOME/.tmux.conf ]; then
-	rm $HOME/.tmux.conf
+##############################
+# JetBrains Mono Fonts	     #
+##############################
+mkdir -p $DOT_FILES/fonts
+curl -o $DOT_FILES/fonts/JetBrainsMono.zip https://www.1001fonts.com/download/jetbrains-mono.zip
+if [ -d $DOT_FILES/fonts/ ]; then
+	mkdir -p $HOME/.local/share/fonts/JetBrainsMono
+	unzip -d $HOME/.local/share/fonts/JetBrainsMono $DOT_FILES/fonts/JetBrainsMono.zip
 fi
-ln -sf $DOT_FILES/tmux/tmux.conf $HOME/.tmux.conf
 
-# Kitty
-if [ -d $CONFIG_PATH/kitty ]; then
-	rm -rf $CONFIG_PATH/kitty
-fi
-ln -sf $DOT_FILES/kitty $CONFIG_PATH
-
-# Scripts
-mkdir -p $HOME/.local/bin
-ln -sf $DOT_FILES/scripts/t $HOME/.local/bin/t
+# Install requirements
+REQUIREMENTS='curl ansible'
+if [ -x "$(command -v apk)" ];       then sudo apk add --no-cache g++ gcc libc-dev make $REQUIREMENTS
+elif [ -x "$(command -v apt)" ]; then sudo apt-get install build-essential $REQUIREMENTS
+elif [ -x "$(command -v dnf)" ];     then sudo dnf install make automake gcc gcc-c++ kernel-devel $REQUIREMENTS
+elif [ -x "$(command -v pacman)" ];     then sudo pacman -Sy base-devel $REQUIREMENTS
+elif [ -x "$(command -v zypper)" ];  then sudo zypper install -t pattern devel_basis && sudo zypper install $REQUIREMENTS
+else echo "FAILED TO INSTALL PACKAGE: Package manager not found. You must manually install: $REQUIREMENTS">&2; fi
 
 # Brew
-# sh -c "$(curl -fsSL https://raw.githubusercontent.com/Linuxbrew/install/master/install.sh)"
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
 
 if [ -d /home/linuxbrew/ ]; then
 	test -d ~/.linuxbrew && eval "$(~/.linuxbrew/bin/brew shellenv)"
 	test -d /home/linuxbrew/.linuxbrew && eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-	test -r ~/.bash_profile && echo "eval \"\$($(brew --prefix)/bin/brew shellenv)\"" >> ~/.bash_profile
+	
+	# This is in git
+	# test -r ~/.bash_profile && echo "eval \"\$($(brew --prefix)/bin/brew shellenv)\"" >> ~/.bash_profile
 fi
 
 brew vendor-install ruby
-brew install gcc
+brew install gcc neovim
+
+# Install pipx with brew
+brew install pipx
+brew cleanup --prune 30
+pipx ensurepath completions
 
 # Install multiple php
 brew tap shivammathur/php
@@ -75,22 +76,37 @@ sudo ln -sf /home/linuxbrew/.linuxbrew/opt/php@8.2/bin/php /usr/local/bin/php82
 
 # Current php
 sudo ln -sf /home/linuxbrew/.linuxbrew/opt/php@8.2/bin/php /usr/local/bin/php
+# End Brew
 
-# Composer
-COMPOSER=/usr/local/bin/composer
-if [ ! -f "$COMPOSER" ]; then
-	php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
-	php -r "if (hash_file('sha384', 'composer-setup.php') === '55ce33d7678c5a611085589f1f3ddf8b3c52d662cd01d4ba75c0ee0459970c2200a51f492d557530c71c15d8dba01eae') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;"
-	php composer-setup.php
-	php -r "unlink('composer-setup.php');"
-	sudo mv composer.phar /usr/local/bin/composer
+# Install poetry
+pipx install --force poetry
+
+# Install ansible
+# pipx install --include-deps ansible
+
+# Run playbooks
+echo "Your password needed! "
+ansible-playbook --ask-become-pass $DOT_FILES/playbooks/main.yaml
+
+# Install Rust
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+
+# tmux
+if [ -f $HOME/.tmux.conf ]; then
+	rm $HOME/.tmux.conf
 fi
+ln -sf $DOT_FILES/tmux/tmux.conf $HOME/.tmux.conf
 
-# yt-dlp
+# Kitty
+if [ -d $CONFIG_PATH/kitty ]; then
+	rm -rf $CONFIG_PATH/kitty
+fi
+ln -sf $DOT_FILES/kitty $CONFIG_PATH
+
+# yt-dlpd
 mkdir -p $HOME/.config/yt-dlp
 ln -sf $DOT_FILES/yt-dlp/config $HOME/.config/yt-dlp/config
 ln -sf $DOT_FILES/yt-dlp/laracasts.config $HOME/.config/yt-dlp/laracasts.config
-
 
 # NeoVim
 if [ -d $CONFIG_PATH/nvim ]; then
@@ -98,15 +114,7 @@ if [ -d $CONFIG_PATH/nvim ]; then
 fi
 ln -sf $DOT_FILES/nvim $CONFIG_PATH
 
-# Install pipx with brew
-brew install pipx
-brew cleanup --prune 30
-# End Brew
+# Scripts
+mkdir -p $HOME/.local/bin
+ln -sf $DOT_FILES/scripts/t $HOME/.local/bin/t
 
-pipx ensurepath completions
-
-# Install poetry
-pipx install --force poetry
-
-# Install ansible
-pipx install --include-deps ansible
