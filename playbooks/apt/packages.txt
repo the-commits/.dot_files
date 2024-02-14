@@ -1527,8 +1527,6 @@ muon
 nano
 ncurses-base
 ncurses-bin
-neovim
-neovim-runtime
 netbase
 netcat-openbsd
 netplan.io
@@ -1689,7 +1687,6 @@ python3-minimal
 python3-more-itertools
 python3-msgpack
 python3-mutagen
-python3-neovim
 python3-netifaces:amd64
 python3-oauthlib
 python3-olefile
@@ -1705,7 +1702,6 @@ python3-pycryptodome
 python3-pygments
 python3-pyinotify
 python3-pylibacl:amd64
-python3-pynvim
 python3-pyparsing
 python3-pyqt5
 python3-pyqt5.sip
@@ -1891,8 +1887,6 @@ util-linux
 uuid-runtime
 va-driver-all:amd64
 vdpau-driver-all:amd64
-vim-common
-vim-tiny
 vlc
 vlc-bin
 vlc-data
