@@ -1,7 +1,7 @@
 --ignore-errors
 --add-metadata
 --embed-thumbnail
--o "/home/magnus/Videos/%(upload_date>%Y)s/%(upload_date>%m)s/%(upload_date>%d)s/%(uploader)s/%(title)s.%(ext)s"
+-o "/home/magnus/Video/%(uploader)s/%(playlist)s/%(playlist_index)s-%(title)s.%(ext)s"
 -f 'bv+ba'
 -S ext
 --cookies "${HOME}/cookies.txt"
@@ -16,7 +16,7 @@
 --write-link
 --download-archive "${HOME}/archive.txt"
 --sleep-interval 5
---sleep-requests 0.15
+--sleep-requests 0.33
 --wait-for-video 900
 --live-from-start
 -R 25
