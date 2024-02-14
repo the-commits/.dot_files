@@ -59,6 +59,7 @@ pipx ensurepath completions
 
 # Install multiple php
 brew tap shivammathur/php
+brew install shivammathur/php/php@8.3
 brew install shivammathur/php/php@8.2
 brew install shivammathur/php/php@8.1
 brew install shivammathur/php/php@8.0
@@ -72,10 +73,10 @@ sudo ln -sf /home/linuxbrew/.linuxbrew/opt/php@7.4/bin/php /usr/local/bin/php74
 sudo ln -sf /home/linuxbrew/.linuxbrew/opt/php@8.0/bin/php /usr/local/bin/php80
 sudo ln -sf /home/linuxbrew/.linuxbrew/opt/php@8.1/bin/php /usr/local/bin/php81
 sudo ln -sf /home/linuxbrew/.linuxbrew/opt/php@8.2/bin/php /usr/local/bin/php82
-sudo ln -sf /home/linuxbrew/.linuxbrew/opt/php@8.2/bin/php /usr/local/bin/php82
+sudo ln -sf /home/linuxbrew/.linuxbrew/opt/php@8.3/bin/php /usr/local/bin/php82
 
 # Current php
-sudo ln -sf /home/linuxbrew/.linuxbrew/opt/php@8.2/bin/php /usr/local/bin/php
+sudo ln -sf /home/linuxbrew/.linuxbrew/opt/php@8.3/bin/php /usr/local/bin/php
 # End Brew
 
 # Install poetry
@@ -85,8 +86,18 @@ pipx install --force poetry
 # pipx install --include-deps ansible
 
 # Run playbooks
-echo "Your password needed! "
-ansible-playbook --ask-become-pass $DOT_FILES/playbooks/main.yaml
+read -p "Do you want to install with Ansible? [y/N] " choice
+
+case "$choice" in
+  y|Y )
+    echo "Installing with Ansible..."
+    echo "Your password needed! "
+    ansible-playbook --ask-become-pass $DOT_FILES/playbooks/main.yaml
+    ;;
+  * )
+    echo "Skipping Ansible installation."
+    ;;
+esac
 
 # Install Rust
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
