@@ -192,3 +192,16 @@ bindsym $mod+r mode "resize"
 bar {
         status_command i3status
 }
+
+# Remove titlebars
+for_window [class=".*"] border pixel 3
+
+# Gaps
+gaps inner 10
+gaps outer 5
+
+#Background
+exec sh ~/.fehbg
+
+# Take screenshots
+bindsym $mod+z exec "scrot -e 'mv $f ~/Bilder/Screenshots/'"
