@@ -32,12 +32,17 @@ fi
 
 # Install requirements
 REQUIREMENTS='curl ansible'
-if [ -x "$(command -v apk)" ];       then sudo apk add --no-cache g++ gcc libc-dev make $REQUIREMENTS
-elif [ -x "$(command -v apt)" ]; then sudo apt-get install build-essential $REQUIREMENTS
-elif [ -x "$(command -v dnf)" ];     then sudo dnf install make automake gcc gcc-c++ kernel-devel $REQUIREMENTS
-elif [ -x "$(command -v pacman)" ];     then sudo pacman -Sy base-devel $REQUIREMENTS
-elif [ -x "$(command -v zypper)" ];  then sudo zypper install -t pattern devel_basis && sudo zypper install $REQUIREMENTS
-else echo "FAILED TO INSTALL PACKAGE: Package manager not found. You must manually install: $REQUIREMENTS">&2; fi
+if [ -x "$(command -v apk)" ]; then
+	sudo apk add --no-cache g++ gcc libc-dev make $REQUIREMENTS
+elif [ -x "$(command -v apt)" ]; then
+	sudo apt-get install build-essential $REQUIREMENTS
+elif [ -x "$(command -v dnf)" ]; then
+	sudo dnf install make automake gcc gcc-c++ kernel-devel $REQUIREMENTS
+elif [ -x "$(command -v pacman)" ]; then
+	sudo pacman -Sy base-devel $REQUIREMENTS
+elif [ -x "$(command -v zypper)" ]; then
+	sudo zypper install -t pattern devel_basis && sudo zypper install $REQUIREMENTS
+else echo "FAILED TO INSTALL PACKAGE: Package manager not found. You must manually install: $REQUIREMENTS" >&2; fi
 
 # Brew
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
@@ -45,7 +50,7 @@ else echo "FAILED TO INSTALL PACKAGE: Package manager not found. You must manual
 if [ -d /home/linuxbrew/ ]; then
 	test -d $HOME/.linuxbrew && eval "$($HOME/.linuxbrew/bin/brew shellenv)"
 	test -d /home/linuxbrew/.linuxbrew && eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-	
+
 	# This is in git
 	# test -r ~/.bash_profile && echo "eval \"\$($(brew --prefix)/bin/brew shellenv)\"" >> ~/.bash_profile
 fi
@@ -80,6 +85,13 @@ sudo ln -sf /home/linuxbrew/.linuxbrew/opt/php@8.3/bin/php /usr/local/bin/php82
 sudo ln -sf /home/linuxbrew/.linuxbrew/opt/php@8.3/bin/php /usr/local/bin/php
 # End Brew
 
+# Install composer
+php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+php -r "if (hash_file('sha384', 'composer-setup.php') === 'edb40769019ccf227279e3bdd1f5b2e9950eb000c3233ee85148944e555d97be3ea4f40c3c2fe73b22f875385f6a5155') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;"
+php composer-setup.php
+php -r "unlink('composer-setup.php');"
+sudo mv composer.phar /usr/local/bin/composer
+
 # Install poetry
 pipx install --force poetry
 
@@ -90,14 +102,14 @@ pipx install --force poetry
 read -p "Do you want to install with Ansible? [y/N] " choice
 
 case "$choice" in
-  y|Y )
-    echo "Installing with Ansible..."
-    echo "Your password needed! "
-    ansible-playbook --ask-become-pass $DOT_FILES/playbooks/main.yaml
-    ;;
-  * )
-    echo "Skipping Ansible installation."
-    ;;
+y | Y)
+	echo "Installing with Ansible..."
+	echo "Your password needed! "
+	ansible-playbook --ask-become-pass $DOT_FILES/playbooks/main.yaml
+	;;
+*)
+	echo "Skipping Ansible installation."
+	;;
 esac
 
 # Install Rust
@@ -137,4 +149,3 @@ rm -rf $HOME/.config/nvim/.git
 # Scripts
 mkdir -p $HOME/.local/bin
 ln -sf $DOT_FILES/scripts/t $HOME/.local/bin/t
-
