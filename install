@@ -36,6 +36,7 @@ if [ -x "$(command -v apk)" ]; then
 	sudo apk add --no-cache g++ gcc libc-dev make $REQUIREMENTS
 elif [ -x "$(command -v apt)" ]; then
 	sudo apt-get install build-essential $REQUIREMENTS
+	xargs sudo apt-get install <$DOT_FILES/playbooks/apt/apt_packages.txt
 elif [ -x "$(command -v dnf)" ]; then
 	sudo dnf install make automake gcc gcc-c++ kernel-devel $REQUIREMENTS
 elif [ -x "$(command -v pacman)" ]; then
