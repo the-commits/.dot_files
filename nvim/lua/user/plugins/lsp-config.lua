@@ -1,9 +1,11 @@
 require('mason').setup()
 require('mason-lspconfig').setup({ automatic_installation = true })
-local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
-require('lspconfig').lua_ls.setup({})
-require('lspconfig').intelephense.setup({})
+local capabilities = require("cmp_nvim_lsp").default_capabilities()
+-- local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
+
+require('lspconfig').lua_ls.setup({ capabilities = capabilities })
+require('lspconfig').intelephense.setup({ capabilities = capabilities })
 require('lspconfig').volar.setup({
   capabilities = capabilities,
   filetypes = {'typescript', 'javascript', 'javascriptreact', 'typescriptreact', 'vue', 'json'}
