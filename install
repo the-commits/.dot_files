@@ -12,7 +12,6 @@ if [ -f $HOME/.bash_profile ]; then
 fi
 if [ -f $HOME/.bash_logout ]; then
 	rm $HOME/.bash_logout
-fi
 
 ln -sf $DOT_FILES/bash/.bash_aliases $HOME/.bash_aliases
 ln -sf $DOT_FILES/bash/.bashrc $HOME/.bashrc
