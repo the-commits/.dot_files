@@ -5,7 +5,8 @@ PACKAGES=$DOT_FILES/packages
 CONFIG_PATH=$HOME/.config
 NVIM_CONFIG=$CONFIG_PATH/nvim
 NVIM_PLUGINS=$NVIM_CONFIG/lua/plugins
-EPOCH=$(date %s%N)
+EPOCH=$(date +%s%N)
+ARCHIVE=$DOT_FILES/archive/$EPOCH
 
 # Remove brew if existing
 function remove_brew {
@@ -34,13 +35,20 @@ ln -sf $DOT_FILES/bash/.bash_aliases $HOME/.bash_aliases
 ln -sf $DOT_FILES/bash/.bashrc $HOME/.bashrc
 ln -sf $DOT_FILES/bash/.bash_profile $HOME/.bash_profile
 ln -sf $DOT_FILES/bash/.bash_logout $HOME/.bash_logout
+if grep -Fxq "$PACKAGES" $HOME/.bashrc; then
+	echo "Packages path exist in .bashrc"
+else
+	echo "Add packages path to .bashrc"
+	echo "export PACKAGES=${PACKAGES};" >>$HOME/.bashrc
+fi
+
 source $DOT_FILES/bash/.bashrc $HOME/.bashrc
 
 ##############################
 # JetBrains Mono Fonts	     #
 ##############################
 mkdir -p $DOT_FILES/fonts
-curl -o $DOT_FILES/fonts/JetBrainsMono.zip https://www.1001fonts.com/download/jetbrains-mono.zip
+curl -s -o $DOT_FILES/fonts/JetBrainsMono.zip https://www.1001fonts.com/download/jetbrains-mono.zip
 if [ -d $DOT_FILES/fonts/ ]; then
 	mkdir -p $HOME/.local/share/fonts/JetBrainsMono
 	unzip -d $HOME/.local/share/fonts/JetBrainsMono $DOT_FILES/fonts/JetBrainsMono.zip
@@ -67,7 +75,7 @@ if [ -x "$(command -v snap)" ]; then
 fi
 
 # Install Rust
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+curl -s --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 
 # tmux
 if [ -f $HOME/.tmux.conf ]; then
@@ -91,7 +99,12 @@ if [ -d $CONFIG_PATH/nvim ]; then
 	rm -rf $CONFIG_PATH/nvim
 fi
 
-# Move pre-existing nvim conf
+if [ -d $DOT_FILES/nvim ]; then
+	mkdir -p $ARCHIVE
+	mv -f $DOT_FILES/nvim $ARCHIVE/nvim
+fi
+
+# Remove pre-existing nvim conf
 rm -rf $HOME/.local/share/nvim
 rm -rf $HOME/.local/state/nvim
 rm -rf $HOME/.cache/nvim
@@ -107,4 +120,7 @@ ln -sf $DOT_FILES/nvim_plugins/my_plugin.lua $NVIM_PLUGINS/my_plugin.lua
 
 # Scripts
 mkdir -p $HOME/.local/bin
-ln -sf $DOT_FILES/scripts/tmux.sh $HOME/.local/bin/tk.sh
+ln -sf $DOT_FILES/scripts/tk $HOME/.local/bin/tk
+chmod +x $DOT_FILES/scripts/tk
+ln -sf $DOT_FILES/scripts/update_apt_list $HOME/.local/bin/update_apt_list
+chmod +x $DOT_FILES/scripts/update_apt_list
