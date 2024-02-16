@@ -2,13 +2,7 @@
 - kitty
 - NeoVim
 - tmux
-
-# Programming Languages
-- PHP
-- Ruby
-- JS (Vue, react)
-- lua
-
+- apt/snap
 
 # Guides
-Install packages `xargs sudo apt-get install < apt_packages.txt`
+Update packages `update_apt_packages`
