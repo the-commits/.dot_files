@@ -1,4 +1,4 @@
 # NeoVim Aliases
-alias vim="nvim"
+alias vim="snap run nvim"
 alias vi="vim"
 alias v="vi"

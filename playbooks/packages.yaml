@@ -1,8 +1,0 @@
----
-  - name: "Install latest packages from packages.txt"
-    become: True
-    ansible.builtin.package:
-      name:
-        - "{{ item }}"
-      state: latest
-    with_lines: "cat {{ ansible_pkg_mgr }}/packages.txt"

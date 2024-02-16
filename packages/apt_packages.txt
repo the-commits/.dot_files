@@ -1,3 +1,6 @@
+ansible
+build-essential
+php-dev
 accountsservice
 acl
 acpi-support
