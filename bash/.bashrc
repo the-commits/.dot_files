@@ -120,3 +120,6 @@ fi
 # Add local bins
 export PATH=$PATH:/$HOME/.local/bin
 export PACKAGES=/home/mangebang/Documents/Repos/.dot_files/packages;
+if [ -f ~/.secrets ]; then
+    . ~/.secrets
+fi

@@ -1,4 +1,5 @@
 accountsservice
+xsel
 ack
 acl
 acpi-support

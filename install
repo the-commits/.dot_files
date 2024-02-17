@@ -7,6 +7,7 @@ NVIM_CONFIG=$CONFIG_PATH/nvim
 NVIM_PLUGINS=$NVIM_CONFIG/lua/plugins
 EPOCH=$(date +%s%N)
 ARCHIVE=$DOT_FILES/archive/$EPOCH
+NERD_FONT_VERSION="v3.1.1"
 
 # Remove brew if existing
 function remove_brew {
@@ -23,12 +24,11 @@ function remove_brew {
 ##############################
 function dl_all_nerd_fonts {
 	mkdir -p $DOT_FILES/fonts
-	curl -s -L -o $DOT_FILES/fonts/NerdFonts.zip -A "Mozilla/5.0" https://github.com/ryanoasis/nerd-fonts/archive/refs/tags/v3.1.1.zip
+	curl -s -L -o $DOT_FILES/fonts/NerdFonts_$NERD_FONT_VERSION.zip -A "Mozilla/5.0" https://github.com/ryanoasis/nerd-fonts/archive/refs/tags/$NERD_FONT_VERSION.zip
 	if [ -d $DOT_FILES/fonts/ ]; then
 		mkdir -p $HOME/.local/share/fonts
-		unzip -d $HOME/.local/share/fonts $DOT_FILES/fonts/NerdFonts.zip
-		rm -rf $DOT_FILES/fonts
-fi
+		unzip -d $HOME/.local/share/fonts $DOT_FILES/fonts/NerdFonts_$NERD_FONT_VERSION.zip
+	fi
 }
 
 # Bash
@@ -44,15 +44,21 @@ fi
 if [ -f $HOME/.bash_aliases ]; then
 	rm $HOME/.bash_aliases
 fi
+if [ -f $HOME/.secrets ]; then
+	rm $HOME/.secrets
+fi
 ln -sf $DOT_FILES/bash/.bash_aliases $HOME/.bash_aliases
 ln -sf $DOT_FILES/bash/.bashrc $HOME/.bashrc
 ln -sf $DOT_FILES/bash/.bash_profile $HOME/.bash_profile
 ln -sf $DOT_FILES/bash/.bash_logout $HOME/.bash_logout
+ln -sf $DOT_FILES/bash/.bash_aliases $HOME/.bash_aliases
+if [ -f $DOT_FILES/bash/.secrets ]; then
+	ln -sf $DOT_FILES/bash/.secrets $HOME/.secrets
+fi
 source $DOT_FILES/bash/.bashrc $HOME/.bashrc
 
 # Download fonts
-echo "Downloading fonts..."
-dl_all_nerd_fonts&
+dl_all_nerd_fonts
 
 # Install requirements
 if [ -x "$(command -v apt)" ]; then
@@ -112,12 +118,14 @@ sudo install lazygit /usr/local/bin
 rm -rf lazygit*
 
 # Lazyvim
-wget https://github.com/LazyVim/starter/archive/refs/heads/main.zip && unzip main.zip -d lazyvim && rm main.zip
+curl -Lso lazyvim.zip https://github.com/LazyVim/starter/archive/refs/heads/main.zip && unzip lazyvim.zip -d lazyvim
 
 # Scripts
 mkdir -p $HOME/.local/bin
 ln -sf $DOT_FILES/scripts/update_apt_list $HOME/.local/bin/update_apt_list
+ln -sf $DOT_FILES/scripts/commit_message $HOME/.local/bin/commit_message
 chmod +x $DOT_FILES/scripts/update_apt_list
+chmod +x $DOT_FILES/scripts/commit_message
 
 
 # Looki looki if reboot is needy needy
