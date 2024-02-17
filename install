@@ -54,6 +54,16 @@ if [ -d $DOT_FILES/fonts/ ]; then
 	unzip -d $HOME/.local/share/fonts/JetBrainsMono $DOT_FILES/fonts/JetBrainsMono.zip
 fi
 
+##############################
+# Symbols Nerd Fonts	     #
+##############################
+curl -s -o $DOT_FILES/fonts/NerdFontsSymbolsOnly.zip https://github.com/ryanoasis/nerd-fonts/releases/download/v3.1.1/NerdFontsSymbolsOnly.zip
+if [ -d $DOT_FILES/fonts/ ]; then
+	mkdir -p $HOME/.local/share/fonts/NerdFontsSymbolsOnly
+	unzip -d $HOME/.local/share/fonts/NerdFontsSymbolsOnly $DOT_FILES/fonts/NerdFontsSymbolsOnly.zip
+fi
+
+
 # Install requirements
 if [ -x "$(command -v apt)" ]; then
 	remove_brew
