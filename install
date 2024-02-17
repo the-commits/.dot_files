@@ -18,6 +18,19 @@ function remove_brew {
 	fi
 }
 
+##############################
+# All Nerd Fonts	     #
+##############################
+function dl_all_nerd_fonts {
+	mkdir -p $DOT_FILES/fonts
+	curl -s -L -o $DOT_FILES/fonts/NerdFonts.zip -A "Mozilla/5.0" https://github.com/ryanoasis/nerd-fonts/archive/refs/tags/v3.1.1.zip
+	if [ -d $DOT_FILES/fonts/ ]; then
+		mkdir -p $HOME/.local/share/fonts
+		unzip -d $HOME/.local/share/fonts $DOT_FILES/fonts/NerdFonts.zip
+		rm -rf $DOT_FILES/fonts
+fi
+}
+
 # Bash
 if [ -f $HOME/.bashrc ]; then
 	rm $HOME/.bashrc
@@ -37,25 +50,9 @@ ln -sf $DOT_FILES/bash/.bash_profile $HOME/.bash_profile
 ln -sf $DOT_FILES/bash/.bash_logout $HOME/.bash_logout
 source $DOT_FILES/bash/.bashrc $HOME/.bashrc
 
-##############################
-# JetBrains Mono Fonts	     #
-##############################
-mkdir -p $DOT_FILES/fonts
-curl -s -o $DOT_FILES/fonts/JetBrainsMono.zip https://www.1001fonts.com/download/jetbrains-mono.zip
-if [ -d $DOT_FILES/fonts/ ]; then
-	mkdir -p $HOME/.local/share/fonts/JetBrainsMono
-	unzip -d $HOME/.local/share/fonts/JetBrainsMono $DOT_FILES/fonts/JetBrainsMono.zip
-fi
-
-##############################
-# Symbols Nerd Fonts	     #
-##############################
-curl -s -o $DOT_FILES/fonts/NerdFontsSymbolsOnly.zip https://github.com/ryanoasis/nerd-fonts/releases/download/v3.1.1/NerdFontsSymbolsOnly.zip
-if [ -d $DOT_FILES/fonts/ ]; then
-	mkdir -p $HOME/.local/share/fonts/NerdFontsSymbolsOnly
-	unzip -d $HOME/.local/share/fonts/NerdFontsSymbolsOnly $DOT_FILES/fonts/NerdFontsSymbolsOnly.zip
-fi
-
+# Download fonts
+echo "Downloading fonts..."
+dl_all_nerd_fonts&
 
 # Install requirements
 if [ -x "$(command -v apt)" ]; then
@@ -107,7 +104,6 @@ rm -rf $HOME/.local/share/nvim
 rm -rf $HOME/.local/state/nvim
 rm -rf $HOME/.cache/nvim
 
-
 # Lazygit
 LAZYGIT_VERSION=$(curl -s "https://api.github.com/repos/jesseduffield/lazygit/releases/latest" | grep -Po '"tag_name": "v\K[^"]*')
 curl -Lso lazygit.tar.gz "https://github.com/jesseduffield/lazygit/releases/latest/download/lazygit_${LAZYGIT_VERSION}_Linux_x86_64.tar.gz"
@@ -115,6 +111,8 @@ tar xf lazygit.tar.gz lazygit
 sudo install lazygit /usr/local/bin
 rm -rf lazygit*
 
+# Lazyvim
+wget https://github.com/LazyVim/starter/archive/refs/heads/main.zip && unzip main.zip -d lazyvim && rm main.zip
 
 # Scripts
 mkdir -p $HOME/.local/bin
