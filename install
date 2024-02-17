@@ -89,11 +89,6 @@ if [ -d $CONFIG_PATH/kitty ]; then
 fi
 ln -sf $DOT_FILES/kitty $CONFIG_PATH
 
-# yt-dlp
-mkdir -p $HOME/.config/yt-dlp
-ln -sf $DOT_FILES/yt-dlp/config $HOME/.config/yt-dlp/config
-ln -sf $DOT_FILES/yt-dlp/laracasts.config $HOME/.config/yt-dlp/laracasts.config
-
 # NeoVim
 if [ -d $CONFIG_PATH/nvim ]; then
 	rm -rf $CONFIG_PATH/nvim
