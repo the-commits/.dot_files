@@ -35,13 +35,6 @@ ln -sf $DOT_FILES/bash/.bash_aliases $HOME/.bash_aliases
 ln -sf $DOT_FILES/bash/.bashrc $HOME/.bashrc
 ln -sf $DOT_FILES/bash/.bash_profile $HOME/.bash_profile
 ln -sf $DOT_FILES/bash/.bash_logout $HOME/.bash_logout
-if grep -Fxq "$PACKAGES" $HOME/.bashrc; then
-	echo "Packages path exist in .bashrc"
-else
-	echo "Add packages path to .bashrc"
-	echo "export PACKAGES=${PACKAGES};" >>$HOME/.bashrc
-fi
-
 source $DOT_FILES/bash/.bashrc $HOME/.bashrc
 
 ##############################
