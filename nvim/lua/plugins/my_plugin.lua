@@ -1,1 +1,0 @@
-/home/mangebang/Documents/Repos/.dot_files/nvim_plugins/my_plugin.lua
