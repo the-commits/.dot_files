@@ -114,9 +114,16 @@ rm -rf $HOME/.local/share/nvim
 rm -rf $HOME/.local/state/nvim
 rm -rf $HOME/.cache/nvim
 
+
+# Lazygit
+LAZYGIT_VERSION=$(curl -s "https://api.github.com/repos/jesseduffield/lazygit/releases/latest" | grep -Po '"tag_name": "v\K[^"]*')
+curl -Lso lazygit.tar.gz "https://github.com/jesseduffield/lazygit/releases/latest/download/lazygit_${LAZYGIT_VERSION}_Linux_x86_64.tar.gz"
+tar xf lazygit.tar.gz lazygit
+sudo install lazygit /usr/local/bin
+rm -rf lazygit*
+
+
 # Scripts
 mkdir -p $HOME/.local/bin
-ln -sf $DOT_FILES/scripts/tk $HOME/.local/bin/tk
-chmod +x $DOT_FILES/scripts/tk
 ln -sf $DOT_FILES/scripts/update_apt_list $HOME/.local/bin/update_apt_list
 chmod +x $DOT_FILES/scripts/update_apt_list
