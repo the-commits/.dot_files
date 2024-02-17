@@ -18,7 +18,3 @@ The Structured Commit Message Approach is a method for composing informative and
 ```
 By following this approach, commit messages become more detailed, consistent, and informative, aiding in project documentation and collaboration.
 
-
-
-### This repo is for my personal use and is only public to be reachable without keys
-But feel free to interact with it, do whatever you want, but it is only a personal project.

@@ -15,11 +15,7 @@ PROMPT="Write a concise git commit message divided into purpose, outcome, contex
 PAYLOAD=$(generate_payload "$MODEL" "$PROMPT")
 
 if git rev-parse --is-inside-work-tree &>/dev/null; then
-    echo "Sending payload:"
-    echo "$PAYLOAD"
     RESPONSE=$(curl -s -d "$PAYLOAD" "$ENDPOINT")
-    echo "Received response:"
-    echo "$RESPONSE"
 
     if [ -z "$RESPONSE" ] || [ "$RESPONSE" = "null" ]; then
         echo "Error: Response is null." >&2
