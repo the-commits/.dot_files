@@ -127,3 +127,10 @@ rm -rf lazygit*
 mkdir -p $HOME/.local/bin
 ln -sf $DOT_FILES/scripts/update_apt_list $HOME/.local/bin/update_apt_list
 chmod +x $DOT_FILES/scripts/update_apt_list
+
+
+# Looki looki if reboot is needy needy
+if [ -f /var/run/reboot-required ]; then
+  echo 'reboot required'
+  sudo reboot
+fi
