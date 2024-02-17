@@ -121,3 +121,5 @@ fi
 export PATH=$PATH:/$HOME/.local/bin
 export PACKAGES=/home/mangebang/Documents/Repos/.dot_files/packages;
 export PACKAGES=/home/mangebang/Documents/Repos/.dot_files/packages;
+export PACKAGES=/home/mangebang/Documents/Repos/.dot_files/packages;
+export PACKAGES=/home/mangebang/Documents/Repos/.dot_files/packages;
