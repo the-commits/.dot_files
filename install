@@ -109,15 +109,6 @@ rm -rf $HOME/.local/share/nvim
 rm -rf $HOME/.local/state/nvim
 rm -rf $HOME/.cache/nvim
 
-# Install lazyvim
-git clone https://github.com/LazyVim/starter $DOT_FILES/nvim
-rm -rf $DOT_FILES/nvim/.git
-ln -sf $DOT_FILES/nvim $NVIM_CONFIG
-if [ -f $NVIM_PLUGINS/my_plugin.lua ]; then
-	rm -f $NVIM_PLUGINS/my_plugin.lua
-fi
-ln -sf $DOT_FILES/nvim_plugins/my_plugin.lua $NVIM_PLUGINS/my_plugin.lua
-
 # Scripts
 mkdir -p $HOME/.local/bin
 ln -sf $DOT_FILES/scripts/tk $HOME/.local/bin/tk
