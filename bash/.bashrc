@@ -115,7 +115,6 @@ if ! shopt -oq posix; then
     . /etc/bash_completion
   fi
 fi
-. "$HOME/.cargo/env"
 
 # Add local bins
 export PATH=$PATH:/$HOME/.local/bin
@@ -123,4 +122,52 @@ export PACKAGES=/home/mangebang/Documents/Repos/.dot_files/packages;
 if [ -f ~/.secrets ]; then
     . ~/.secrets
 fi
+
 export PATH="$PATH:/opt/nvim-linux64/bin"
+
+if [ -f ~/.bash_exports ]; then
+    . ~/.bash_exports
+fi
+
+# enable programmable completion features (you don't need to enable
+# this, if it's already enabled in /etc/bash.bashrc and /etc/profile
+# sources /etc/bash.bashrc).
+if ! shopt -oq posix; then
+  if [ -f /usr/share/bash-completion/bash_completion ]; then
+    . /usr/share/bash-completion/bash_completion
+  elif [ -f /etc/bash_completion ]; then
+    . /etc/bash_completion
+  fi
+fi
+
+alias sail='[ -f sail ] && sh sail || sh vendor/bin/sail'
+
+function webcp() {
+	wget --mirror --convert-links --adjust-extension --page-requisites --no-parent $1
+}
+
+# >>> conda initialize >>>
+# !! Contents within this block are managed by 'conda init' !!
+__conda_setup="$('/home/mangebang/anaconda3/bin/conda' 'shell.bash' 'hook' 2> /dev/null)"
+if [ $? -eq 0 ]; then
+    eval "$__conda_setup"
+else
+    if [ -f "/home/mangebang/anaconda3/etc/profile.d/conda.sh" ]; then
+        . "/home/mangebang/anaconda3/etc/profile.d/conda.sh"
+    else
+        export PATH="/home/mangebang/anaconda3/bin:$PATH"
+    fi
+fi
+unset __conda_setup
+# <<< conda initialize <<<
+
+. "$HOME/.cargo/env"
+export RUSTUP_HOME="$HOME/.rustup"
+export CARGO_HOME="$HOME/.cargo"
+# Fetch the system root directory for Rust
+SYSROOT=$(rustc --print sysroot)
+# Formulate and export the RUST_SRC_PATH
+export RUST_SRC_PATH="$SYSROOT/lib/rustlib/src/rust/library"
+
+# Ollama
+export OLLAMA_HOST=0.0.0.0:11777
