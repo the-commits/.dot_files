@@ -5,3 +5,4 @@ fonts
 *.tar.gz
 lazyvim/
 alacritty-*/
+*.installer.sh
