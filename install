@@ -125,6 +125,13 @@ if [ -d $DOT_FILES/nvim ]; then
 	mv -f $DOT_FILES/nvim $ARCHIVE/nvim
 fi
 
+# Install Anaconda
+curl -Lso anaconda.installer.sh https://repo.anaconda.com/archive/Anaconda3-2023.09-0-Linux-x86_64.sh
+bash anaconda.installer.sh
+
+# Install Rust
+curl -s --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+
 # Remove pre-existing nvim conf
 rm -rf $HOME/.local/share/nvim
 rm -rf $HOME/.local/state/nvim
