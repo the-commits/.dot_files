@@ -103,6 +103,12 @@ if [ -d $CONFIG_PATH/kitty ]; then
 fi
 ln -sf $DOT_FILES/kitty $CONFIG_PATH
 
+# Neofetch
+if [ -d $CONFIG_PATH/neofetch ]; then
+	rm -rf $CONFIG_PATH/neofetch
+fi
+ln -sf $DOT_FILES/neofetch $CONFIG_PATH
+
 # NeoVim
 if [ -d $CONFIG_PATH/nvim ]; then
 	rm -rf $CONFIG_PATH/nvim
