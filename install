@@ -44,6 +44,12 @@ fi
 if [ -f $HOME/.bash_aliases ]; then
 	rm $HOME/.bash_aliases
 fi
+if [ -f $HOME/.bash_exports ]; then
+	rm $HOME/.bash_exports
+fi
+if [ -f $HOME/.bash_completion ]; then
+	rm $HOME/.bash_completion
+fi
 if [ -f $HOME/.secrets ]; then
 	rm $HOME/.secrets
 fi
@@ -52,6 +58,8 @@ ln -sf $DOT_FILES/bash/.bashrc $HOME/.bashrc
 ln -sf $DOT_FILES/bash/.bash_profile $HOME/.bash_profile
 ln -sf $DOT_FILES/bash/.bash_logout $HOME/.bash_logout
 ln -sf $DOT_FILES/bash/.bash_aliases $HOME/.bash_aliases
+ln -sf $DOT_FILES/bash/.bash_exports $HOME/.bash_exports
+ln -sf $DOT_FILES/bash/.bash_completion $HOME/.bash_completion
 if [ -f $DOT_FILES/bash/.secrets ]; then
 	ln -sf $DOT_FILES/bash/.secrets $HOME/.secrets
 fi
