@@ -93,6 +93,24 @@ if [ -x "$(command -v snap)" ]; then
 	remove_brew
 fi
 
+# tmux
+if [ -f $HOME/.tmux.conf ]; then
+	rm $HOME/.tmux.conf
+fi
+ln -sf $DOT_FILES/tmux/tmux.conf $HOME/.tmux.conf
+
+# Kitty
+if [ -d $CONFIG_PATH/kitty ]; then
+	rm -rf $CONFIG_PATH/kitty
+fi
+ln -sf $DOT_FILES/kitty $CONFIG_PATH
+
+# Neofetch
+if [ -d $CONFIG_PATH/neofetch ]; then
+	rm -rf $CONFIG_PATH/neofetch
+fi
+ln -sf $DOT_FILES/neofetch $CONFIG_PATH
+
 # NeoVim
 curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim-linux64.tar.gz
 sudo rm -rf /opt/nvim
