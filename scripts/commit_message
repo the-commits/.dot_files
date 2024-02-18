@@ -1,0 +1,56 @@
+#!/usr/bin/env bash
+. ~/.secrets
+
+MODEL="GPT-4"
+ENDPOINT="https://api.openai.com/v1/chat/completions"
+GIT_DIFF=$(git diff HEAD~1)
+PROMPT="Write a concise git commit message divided into purpose, outcome, context and approach. Based on the changes in the last commit: ${GIT_DIFF}"
+PAYLOAD=$(generate_payload "$MODEL" "$PROMPT")
+
+generate_payload() {
+	local model="$1"
+	local prompt="$2"
+	local payload=$(jq -n --arg model "$model" --arg prompt "$prompt" '{"model": "$model", "stream": false, "messages": [{role: "system", content: "You are an expert lead developer that write commit messages like a git god."},{role: "user", content: $prompt}], temperature: 0.1}')
+	echo "$payload" | jq -c
+}
+generate_payload
+exit
+#MODEL="codellama"
+#ENDPOINT="http://envup:13337/api/chat"
+
+if git rev-parse --is-inside-work-tree &>/dev/null; then
+	RESPONSE=$(
+		curl \
+			-H "Content-Type: application/josn" \
+			-H "Authorization: Bearer $OPEN_AI_COMMIT_MESSAGE" \
+			-s \
+			-d "$PAYLOAD" \
+			"$ENDPOINT"
+	)
+
+	if [ -z "$RESPONSE" ] || [ "$RESPONSE" = "null" ]; then
+		echo "Error: Response is null." >&2
+		exit 1
+	fi
+
+	if ! echo "$RESPONSE" | jq -e . >/dev/null; then
+		echo "Response from server:"
+		echo "$RESPONSE"
+		echo "Error: Invalid JSON response." >&2
+		exit 1
+	fi
+
+	echo "$RESPONSE"
+	COMMIT_MESSAGE=$(echo "$RESPONSE" | jq -r '.message.content')
+	echo $COMMIT_MESSAGE
+	if [ -z "$COMMIT_MESSAGE" ] || [ "$COMMIT_MESSAGE" = "null" ]; then
+
+		echo "Error: Response does not contain a valid commit message." >&2
+		exit 1
+	fi
+
+	#git commit -m "$COMMIT_MESSAGE"
+	echo $COMMIT_MESSAGE
+else
+	echo "Error: Not in a Git repository." >&2
+fi
