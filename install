@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 
 DOT_FILES=$(cd $(dirname "${BASH_SOURCE[0]}") && pwd)
-PACKAGES=$DOT_FILES/packages
 CONFIG_PATH=$HOME/.config
 NVIM_CONFIG=$CONFIG_PATH/nvim
 NVIM_PLUGINS=$NVIM_CONFIG/lua/plugins
@@ -60,40 +59,14 @@ source $DOT_FILES/bash/.bashrc $HOME/.bashrc
 # Download fonts
 dl_all_nerd_fonts
 
-# Install requirements
+# Remove brew if apt or snap is available
 if [ -x "$(command -v apt)" ]; then
 	remove_brew
-	sudo apt update -y && sudo apt upgrade -y
-	xargs sudo apt-get install <$PACKAGES/apt_packages.txt
-	sudo apt autoclean && sudo apt clean
 fi
 
 if [ -x "$(command -v snap)" ]; then
 	remove_brew
-	while IFS="" read -r p || [ -n "$p" ]; do
-		sudo snap install "$p"
-		sudo snap refresh "$p"
-	done <$PACKAGES/snap_packages.txt
-	while IFS="" read -r p || [ -n "$p" ]; do
-		sudo snap install --classic "$p"
-		sudo snap refresh --classic "$p"
-	done <$PACKAGES/snap_classic_packages.txt
 fi
-
-# Install Rust
-curl -s --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-
-# tmux
-if [ -f $HOME/.tmux.conf ]; then
-	rm $HOME/.tmux.conf
-fi
-ln -sf $DOT_FILES/tmux/tmux.conf $HOME/.tmux.conf
-
-# Kitty
-if [ -d $CONFIG_PATH/kitty ]; then
-	rm -rf $CONFIG_PATH/kitty
-fi
-ln -sf $DOT_FILES/kitty $CONFIG_PATH
 
 # NeoVim
 if [ -d $CONFIG_PATH/nvim ]; then
