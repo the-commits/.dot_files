@@ -119,6 +119,7 @@ rm -rf lazygit*
 
 # Lazyvim
 curl -Lso lazyvim.zip https://github.com/LazyVim/starter/archive/refs/heads/main.zip && unzip lazyvim.zip -d lazyvim
+ln -sf $DOT_FILES/lazyvim $CONFIG_PATH/nvim
 
 # Scripts
 mkdir -p $HOME/.local/bin
