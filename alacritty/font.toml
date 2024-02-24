@@ -1,0 +1,6 @@
+[font]
+normal = { family = "GeistMono Nerd Font", style = "Regular" }
+bold = { family = "GeistMono Nerd Font Mono", style = "Bold" }
+italic = { family = "GeistMono Nerd Font", style = "Italic" }
+bold_italic = { family = "GeistMono Nerd Font Mono", style = "Italic" }
+size = 12
