@@ -6,8 +6,7 @@ NVIM_CONFIG=$CONFIG_PATH/nvim
 NVIM_PLUGINS=$NVIM_CONFIG/lua/plugins
 EPOCH=$(date +%s%N)
 ARCHIVE=$DOT_FILES/archive/$EPOCH
-NERD_FONT_VERSION="v3.1.1"
-ALACRITTY_VERSION="0.13.1"
+NERD_FONT_VERSION="3.1.1"
 
 # Check machine
 unameOut="$(uname -s)"
@@ -41,10 +40,12 @@ function remove_brew {
 ##############################
 function dl_all_nerd_fonts {
 	mkdir -p $DOT_FILES/fonts
-	curl -s -L -o $DOT_FILES/fonts/NerdFonts_$NERD_FONT_VERSION.zip -A "Mozilla/5.0" https://github.com/ryanoasis/nerd-fonts/archive/refs/tags/$NERD_FONT_VERSION.zip
+	curl -s -L -o $DOT_FILES/fonts/NerdFonts_$NERD_FONT_VERSION.zip -A "Mozilla/5.0" https://github.com/ryanoasis/nerd-fonts/archive/refs/tags/v$NERD_FONT_VERSION.zip
 	if [ -d $DOT_FILES/fonts/ ]; then
-		mkdir -p $HOME/.local/share/fonts
-		unzip -d $HOME/.local/share/fonts $DOT_FILES/fonts/NerdFonts_$NERD_FONT_VERSION.zip
+		unzip $DOT_FILES/fonts/NerdFonts_$NERD_FONT_VERSION.zip
+		cd $DOT_FILES/fonts/nerd-fonts-$NERD_FONT_VERSION && ./install.sh
+		cd $DOT_FILES
+		rm $DOT_FILES/fonts/NerdFonts_$NERD_FONT_VERSION.zip
 	fi
 }
 
@@ -102,6 +103,7 @@ fi
 
 if [ -x "$(command -v snap)" ]; then
 	remove_brew
+	sudo snap install alacritty --classic
 fi
 
 # Neofetch
@@ -114,6 +116,7 @@ ln -sf $DOT_FILES/neofetch $CONFIG_PATH
 curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim-linux64.tar.gz
 sudo rm -rf /opt/nvim
 sudo tar -C /opt -xzf nvim-linux64.tar.gz
+rm nvim-linux64.tar.gz
 
 if [ -d $CONFIG_PATH/nvim ]; then
 	rm -rf $CONFIG_PATH/nvim
@@ -127,6 +130,7 @@ fi
 # Install Anaconda
 curl -Lso anaconda.installer.sh https://repo.anaconda.com/archive/Anaconda3-2023.09-0-Linux-x86_64.sh
 bash anaconda.installer.sh
+rm anaconda.installer.sh
 
 # Remove pre-existing nvim conf
 rm -rf $HOME/.local/share/nvim
@@ -143,6 +147,7 @@ rm -rf lazygit*
 # Lazyvim
 curl -Lso lazyvim.zip https://github.com/LazyVim/starter/archive/refs/heads/main.zip && unzip lazyvim.zip -d lazyvim
 ln -sf $DOT_FILES/lazyvim/starter-main $CONFIG_PATH/nvim
+rm lazyvim.zip
 
 # Scripts
 mkdir -p $HOME/.local/bin

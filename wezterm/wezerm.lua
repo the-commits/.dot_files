@@ -1,13 +1,13 @@
--- Pull in the wezterm API
-local wezterm = require 'wezterm'
+local wezterm = require("wezterm")
+local config = {}
+config.color_scheme = "Red Scheme"
 
--- This will hold the configuration.
-local config = wezterm.config_builder()
-
--- This is where you actually apply your config choices
-
--- For example, changing the color scheme:
-config.color_scheme = 'AdventureTime'
-
--- and finally, return the configuration to wezterm
+config.color_schemes = {
+	["Red Scheme"] = {
+		background = "red",
+	},
+	["Blue Scheme"] = {
+		background = "blue",
+	},
+}
 return config

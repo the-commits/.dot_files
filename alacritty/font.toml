@@ -1,6 +1,6 @@
 [font]
-normal = { family = "GeistMono Nerd Font", style = "Regular" }
-bold = { family = "GeistMono Nerd Font Mono", style = "Bold" }
-italic = { family = "GeistMono Nerd Font", style = "Italic" }
-bold_italic = { family = "GeistMono Nerd Font Mono", style = "Italic" }
+normal = { family = "Hack", style = "Regular" }
+bold = { family = "Hack", style = "Bold" }
+italic = { family = "Hack", style = "Italic" }
+bold_italic = { family = "Hack", style = "Bold Italic" }
 size = 12
