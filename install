@@ -68,15 +68,13 @@ curl -s -L -o $DOT_FILES/alacritty.$ALACRITTY_VERSION.tar.gz https://github.com/
 tar -xzf $DOT_FILES/alacritty.$ALACRITTY_VERSION.tar.gz
 cd $DOT_FILES/alacritty-$ALACRITTY_VERSION && cargo build --release && cd $DOT_FILES
 ln -sf $DOT_FILES/alacritty-$ALACRITTY_VERSION/target/release/alacritty $HOME/.local/bin/alacritty
-
-# Download fonts
-dl_all_nerd_fonts
-
-# Alacritty
 if [ -d $CONFIG_PATH/alacritty ]; then
 	rm -rf $CONFIG_PATH/alacritty
 fi
 ln -sf $DOT_FILES/alacritty $CONFIG_PATH
+
+# Download fonts
+dl_all_nerd_fonts
 
 # Remove brew if apt or snap is available
 if [ -x "$(command -v apt)" ]; then
@@ -92,18 +90,6 @@ fi
 if [ -x "$(command -v snap)" ]; then
 	remove_brew
 fi
-
-# tmux
-if [ -f $HOME/.tmux.conf ]; then
-	rm $HOME/.tmux.conf
-fi
-ln -sf $DOT_FILES/tmux/tmux.conf $HOME/.tmux.conf
-
-# Kitty
-if [ -d $CONFIG_PATH/kitty ]; then
-	rm -rf $CONFIG_PATH/kitty
-fi
-ln -sf $DOT_FILES/kitty $CONFIG_PATH
 
 # Neofetch
 if [ -d $CONFIG_PATH/neofetch ]; then
@@ -128,9 +114,6 @@ fi
 # Install Anaconda
 curl -Lso anaconda.installer.sh https://repo.anaconda.com/archive/Anaconda3-2023.09-0-Linux-x86_64.sh
 bash anaconda.installer.sh
-
-# Install Rust
-curl -s --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 
 # Remove pre-existing nvim conf
 rm -rf $HOME/.local/share/nvim
