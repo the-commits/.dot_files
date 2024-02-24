@@ -21,7 +21,7 @@ MSYS_NT*) machine=Git ;;
 esac
 
 echo "We are running on ${machine}"
-if [ "$machine" != "Linux" ]; then
+if [ "$machine" ~= ^(Linux|Mac)$ ]; then
 	echo "$machine is not added yet"
 	exit 1
 fi
@@ -80,15 +80,11 @@ if [[ $SHELL == *"bash"* ]]; then
 	source $DOT_FILES/bash/.bashrc $HOME/.bashrc
 fi
 
-# Alacritty
-curl -s -L -o $DOT_FILES/alacritty.$ALACRITTY_VERSION.tar.gz https://github.com/alacritty/alacritty/archive/refs/tags/v$ALACRITTY_VERSION.tar.gz
-tar -xzf $DOT_FILES/alacritty.$ALACRITTY_VERSION.tar.gz
-cd $DOT_FILES/alacritty-$ALACRITTY_VERSION && cargo build --release && cd $DOT_FILES
-ln -sf $DOT_FILES/alacritty-$ALACRITTY_VERSION/target/release/alacritty $HOME/.local/bin/alacritty
-if [ -d $CONFIG_PATH/alacritty ]; then
-	rm -rf $CONFIG_PATH/alacritty
+# wezterm
+if [ -d $CONFIG_PATH/wezterm ]; then
+	rm -rf $CONFIG_PATH/wezterm
 fi
-ln -sf $DOT_FILES/alacritty $CONFIG_PATH
+ln -sf $DOT_FILES/wezterm $CONFIG_PATH
 
 # Download fonts
 dl_all_nerd_fonts
