@@ -60,6 +60,12 @@ fi
 # Download fonts
 dl_all_nerd_fonts
 
+# Alacritty
+if [ -d $CONFIG_PATH/alacritty ]; then
+	rm -rf $CONFIG_PATH/alacritty
+fi
+ln -sf $DOT_FILES/alacritty $CONFIG_PATH
+
 # Remove brew if apt or snap is available
 if [ -x "$(command -v apt)" ]; then
 	remove_brew
