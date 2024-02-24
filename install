@@ -30,32 +30,33 @@ function dl_all_nerd_fonts {
 	fi
 }
 
-# Bash
-if [ -f $HOME/.bashrc ]; then
-	rm $HOME/.bashrc
+if [[ $SHELL == *"bash"* ]]; then
+	# Bash
+	if [ -f $HOME/.bashrc ]; then
+		rm $HOME/.bashrc
+	fi
+	if [ -f $HOME/.bash_profile ]; then
+		rm $HOME/.bash_profile
+	fi
+	if [ -f $HOME/.bash_logout ]; then
+		rm $HOME/.bash_logout
+	fi
+	if [ -f $HOME/.bash_aliases ]; then
+		rm $HOME/.bash_aliases
+	fi
+	if [ -f $HOME/.secrets ]; then
+		rm $HOME/.secrets
+	fi
+	ln -sf $DOT_FILES/bash/.bash_aliases $HOME/.bash_aliases
+	ln -sf $DOT_FILES/bash/.bashrc $HOME/.bashrc
+	ln -sf $DOT_FILES/bash/.bash_profile $HOME/.bash_profile
+	ln -sf $DOT_FILES/bash/.bash_logout $HOME/.bash_logout
+	ln -sf $DOT_FILES/bash/.bash_aliases $HOME/.bash_aliases
+	if [ -f $DOT_FILES/bash/.secrets ]; then
+		ln -sf $DOT_FILES/bash/.secrets $HOME/.secrets
+	fi
+	source $DOT_FILES/bash/.bashrc $HOME/.bashrc
 fi
-if [ -f $HOME/.bash_profile ]; then
-	rm $HOME/.bash_profile
-fi
-if [ -f $HOME/.bash_logout ]; then
-	rm $HOME/.bash_logout
-fi
-if [ -f $HOME/.bash_aliases ]; then
-	rm $HOME/.bash_aliases
-fi
-if [ -f $HOME/.secrets ]; then
-	rm $HOME/.secrets
-fi
-ln -sf $DOT_FILES/bash/.bash_aliases $HOME/.bash_aliases
-ln -sf $DOT_FILES/bash/.bashrc $HOME/.bashrc
-ln -sf $DOT_FILES/bash/.bash_profile $HOME/.bash_profile
-ln -sf $DOT_FILES/bash/.bash_logout $HOME/.bash_logout
-ln -sf $DOT_FILES/bash/.bash_aliases $HOME/.bash_aliases
-if [ -f $DOT_FILES/bash/.secrets ]; then
-	ln -sf $DOT_FILES/bash/.secrets $HOME/.secrets
-fi
-source $DOT_FILES/bash/.bashrc $HOME/.bashrc
-
 # Download fonts
 dl_all_nerd_fonts
 
