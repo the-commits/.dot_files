@@ -1,4 +1,5 @@
 # .dotfiles
-- wezterm
+- wezterm (W.I.P)
+- alacritty (MacOS)
 - NeoVim/LazyVim
 
