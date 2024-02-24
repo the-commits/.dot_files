@@ -7,6 +7,7 @@ NVIM_PLUGINS=$NVIM_CONFIG/lua/plugins
 EPOCH=$(date +%s%N)
 ARCHIVE=$DOT_FILES/archive/$EPOCH
 NERD_FONT_VERSION="v3.1.1"
+ALACRITTY_VERSION="0.13.1"
 
 # Remove brew if existing
 function remove_brew {
@@ -29,6 +30,10 @@ function dl_all_nerd_fonts {
 		unzip -d $HOME/.local/share/fonts $DOT_FILES/fonts/NerdFonts_$NERD_FONT_VERSION.zip
 	fi
 }
+
+# Rust
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+source "$HOME/.cargo/env"
 
 if [[ $SHELL == *"bash"* ]]; then
 	# Bash
@@ -57,6 +62,13 @@ if [[ $SHELL == *"bash"* ]]; then
 	fi
 	source $DOT_FILES/bash/.bashrc $HOME/.bashrc
 fi
+
+# Alacritty
+curl -s -L -o $DOT_FILES/alacritty.$ALACRITTY_VERSION.tar.gz https://github.com/alacritty/alacritty/archive/refs/tags/v$ALACRITTY_VERSION.tar.gz
+tar -xzf $DOT_FILES/alacritty.$ALACRITTY_VERSION.tar.gz
+cd $DOT_FILES/alacritty-$ALACRITTY_VERSION && cargo build --release && cd $DOT_FILES
+ln -sf $DOT_FILES/alacritty-$ALACRITTY_VERSION/target/release/alacritty $HOME/.local/bin/alacritty
+
 # Download fonts
 dl_all_nerd_fonts
 
@@ -73,7 +85,7 @@ if [ -x "$(command -v apt)" ]; then
 	echo 'deb [signed-by=/usr/share/keyrings/wezterm-fury.gpg] https://apt.fury.io/wez/ * *' | sudo tee /etc/apt/sources.list.d/wezterm.list
 	sudo apt update -y
 	sudo apt upgrade -y
-	sudo apt install wezterm
+	sudo apt install wezterm cmake pkg-config libfreetype6-dev libfontconfig1-dev libxcb-xfixes0-dev libxkbcommon-dev python3
 	sudo apt autoremove -y
 fi
 
