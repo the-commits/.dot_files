@@ -3,3 +3,5 @@ archive
 fonts
 *.zip
 *.tar.gz
+lazyvim/
+alacritt-*/
