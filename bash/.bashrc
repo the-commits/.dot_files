@@ -123,3 +123,4 @@ export PACKAGES=/home/mangebang/Documents/Repos/.dot_files/packages;
 if [ -f ~/.secrets ]; then
     . ~/.secrets
 fi
+export PATH="$PATH:/opt/nvim-linux64/bin"
