@@ -9,6 +9,23 @@ ARCHIVE=$DOT_FILES/archive/$EPOCH
 NERD_FONT_VERSION="v3.1.1"
 ALACRITTY_VERSION="0.13.1"
 
+# Check machine
+unameOut="$(uname -s)"
+case "${unameOut}" in
+Linux*) machine=Linux ;;
+Darwin*) machine=Mac ;;
+CYGWIN*) machine=Cygwin ;;
+MINGW*) machine=MinGw ;;
+MSYS_NT*) machine=Git ;;
+*) machine="UNKNOWN:${unameOut}" ;;
+esac
+
+echo "We are running on ${machine}"
+if [ "$machine" != "Linux" ]; then
+	echo "$machine is not added yet"
+	exit 1
+fi
+
 # Remove brew if existing
 function remove_brew {
 	if [ -d /home/linuxbrew/ ]; then
