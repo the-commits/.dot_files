@@ -2,10 +2,9 @@
 dynamic_padding = false
 padding = { x = 8, y = 8 }
 decorations = "None"
-position = { x = 80, y = 80 }
-opacity = 0.66
+opacity = 0.77
 blur = true
-startup_mode = "Windowed"
+startup_mode = "Fullscreen"
 title = "~The Commits will flow~"
 dynamic_title = true
 decorations_theme_variant = "None"
