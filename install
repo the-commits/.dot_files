@@ -46,6 +46,7 @@ function dl_all_nerd_fonts {
 		cd $DOT_FILES/fonts/nerd-fonts-$NERD_FONT_VERSION && ./install.sh
 		cd $DOT_FILES
 		rm $DOT_FILES/fonts/NerdFonts_$NERD_FONT_VERSION.zip
+		rm $DOT_FILES/fonts/nerd-fonts-$NERD_FONT_VERSION
 	fi
 }
 
