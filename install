@@ -123,8 +123,7 @@ if [ -d $CONFIG_PATH/nvim ]; then
 fi
 
 if [ -d $DOT_FILES/nvim ]; then
-	mkdir -p $ARCHIVE
-	mv -f $DOT_FILES/nvim $ARCHIVE/nvim
+	ln -sf $DOT_FILES/nvim $CONFIG_PATH
 fi
 
 # Install Anaconda
@@ -146,7 +145,7 @@ rm -rf lazygit*
 
 # Lazyvim
 curl -Lso lazyvim.zip https://github.com/LazyVim/starter/archive/refs/heads/main.zip && unzip lazyvim.zip -d lazyvim
-ln -sf $DOT_FILES/lazyvim/starter-main $CONFIG_PATH/nvim
+cp -ra $DOT_FILES/lazyvim/starter-main/* $CONFIG_PATH/nvim/
 rm lazyvim.zip
 
 # Scripts
