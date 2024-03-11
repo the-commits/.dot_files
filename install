@@ -46,7 +46,7 @@ function dl_all_nerd_fonts {
 		cd $DOT_FILES/fonts/nerd-fonts-$NERD_FONT_VERSION && ./install.sh
 		cd $DOT_FILES
 		rm $DOT_FILES/fonts/NerdFonts_$NERD_FONT_VERSION.zip
-		rm $DOT_FILES/fonts/nerd-fonts-$NERD_FONT_VERSION
+		rm -rf $DOT_FILES/fonts/nerd-fonts-$NERD_FONT_VERSION
 	fi
 }
 
@@ -94,11 +94,9 @@ dl_all_nerd_fonts
 # Remove brew if apt or snap is available
 if [ -x "$(command -v apt)" ]; then
 	remove_brew
-	curl -fsSL https://apt.fury.io/wez/gpg.key | sudo gpg --yes --dearmor -o /usr/share/keyrings/wezterm-fury.gpg
-	echo 'deb [signed-by=/usr/share/keyrings/wezterm-fury.gpg] https://apt.fury.io/wez/ * *' | sudo tee /etc/apt/sources.list.d/wezterm.list
 	sudo apt update -y
 	sudo apt upgrade -y
-	sudo apt install libevent-dev ncurses-dev build-essential bison pkg-config tmux neofetch wezterm cmake pkg-config libfreetype6-dev libfontconfig1-dev libxcb-xfixes0-dev libxkbcommon-dev python3
+	sudo apt install libevent-dev ncurses-dev build-essential bison pkg-config tmux neofetch cmake pkg-config libfreetype6-dev libfontconfig1-dev libxcb-xfixes0-dev libxkbcommon-dev python3
 	sudo apt autoremove -y
 fi
 
