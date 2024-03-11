@@ -82,11 +82,11 @@ if [[ $SHELL == *"bash"* ]]; then
 	source $DOT_FILES/bash/.bashrc $HOME/.bashrc
 fi
 
-# wezterm
-if [ -d $CONFIG_PATH/wezterm ]; then
-	rm -rf $CONFIG_PATH/wezterm
+# tmux
+if [ -f $HOME/.tmux.conf ]; then
+	rm $HOME/.tmux.conf
 fi
-ln -sf $DOT_FILES/wezterm $CONFIG_PATH
+ln -sf $DOT_FILES/tmux/tmux.conf $HOME/.tmux.conf
 
 # Download fonts
 dl_all_nerd_fonts
