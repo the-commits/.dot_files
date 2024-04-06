@@ -1,0 +1,3 @@
+function mullvad_info {
+    curl https://am.i.mullvad.net/json
+}
