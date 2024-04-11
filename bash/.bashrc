@@ -172,6 +172,15 @@ export RUST_SRC_PATH="$SYSROOT/lib/rustlib/src/rust/library"
 
 # Ollama
 export OLLAMA_HOST=0.0.0.0:11777
+function parse_git_dirty() {
+	[[ $(git status 2>/dev/null | tail -n1) != "nothing to commit, working tree clean" ]] && echo -e "\033[0;31m\xE2\x9D\x8C\033[0m"
+	[[ $(git status 2>/dev/null | tail -n1) = "nothing to commit, working tree clean" ]] && echo -e "\033[1;32m\xE2\x9C\x94\033[0m"
+}
+function parse_git_branch() {
+	git branch 2>/dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/(\1)/'
+}
+
+export PS1="\u@\h \[\e[32m\]\w \[\e[91m\]\$(parse_git_branch)\$(parse_git_dirty)\[\e[00m\]$ "
 
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"                   # This loads nvm
