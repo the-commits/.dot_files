@@ -172,12 +172,17 @@ export RUST_SRC_PATH="$SYSROOT/lib/rustlib/src/rust/library"
 
 # Ollama
 export OLLAMA_HOST=0.0.0.0:11777
+
 function parse_git_dirty() {
-	[[ $(git status 2>/dev/null | tail -n1) != "nothing to commit, working tree clean" ]] && echo -e "\033[0;31m\xE2\x9D\x8C\033[0m"
-	[[ $(git status 2>/dev/null | tail -n1) = "nothing to commit, working tree clean" ]] && echo -e "\033[1;32m\xE2\x9C\x94\033[0m"
+	if top="$(git rev-parse --show-toplevel 2>/dev/null)" && [ -w "$top/.git" ]; then
+		[[ $(git status 2>/dev/null | tail -n1) != "nothing to commit, working tree clean" ]] && echo -e "\033[0;31m\xE2\x9D\x8C\033[0m"
+		[[ $(git status 2>/dev/null | tail -n1) = "nothing to commit, working tree clean" ]] && echo -e "\033[1;32m\xE2\x9C\x94\033[0m"
+	fi
 }
 function parse_git_branch() {
-	git branch 2>/dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/(\1)/'
+	if top="$(git rev-parse --show-toplevel 2>/dev/null)" && [ -w "$top/.git" ]; then
+		git branch 2>/dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/(\1)/'
+	fi
 }
 
 export PS1="\u@\h \[\e[32m\]\w \[\e[91m\]\$(parse_git_branch)\$(parse_git_dirty)\[\e[00m\]$ "
