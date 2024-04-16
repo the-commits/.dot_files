@@ -192,4 +192,6 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion" # This loads nvm bash_completion
 export PATH="$HOME/.rbenv/bin:$PATH"
 
+export NODE_PATH=$NODE_PATH:$(npm root -g)
+export GIT_EDITOR=vim
 source $HOME/.bash_func
