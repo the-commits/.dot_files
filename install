@@ -4,8 +4,10 @@ DOT_FILES=$(cd $(dirname "${BASH_SOURCE[0]}") && pwd)
 CONFIG_PATH=$HOME/.config
 
 ##############################
-# Add fonts manually for now #
+# JetBrains Mono Fonts		 #
 ##############################
+mkdir -p $HOME/.local/share/fonts/JetBrainsMono
+unzip -d $HOME/.local/share/fonts/JetBrainsMono $DOT_FILES/fonts/JetBrainsMono.zip
 
 # Bash
 if [ -f $HOME/.bashrc ]; then
@@ -98,13 +100,6 @@ if [ -d $CONFIG_PATH/polybar ]; then
 	rm -rf $CONFIG_PATH/polybar
 fi
 ln -sf $DOT_FILES/polybar $CONFIG_PATH
-
-
-# i3wm
-if [ -d $CONFIG_PATH/i3 ]; then
-	rm -rf $CONFIG_PATH/i3
-fi
-ln -sf $DOT_FILES/i3 $CONFIG_PATH
 
 # Install pipx with brew
 brew install pipx
