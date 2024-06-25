@@ -3,6 +3,9 @@
 DOT_FILES=$(cd $(dirname "${BASH_SOURCE[0]}") && pwd)
 CONFIG_PATH=$HOME/.config
 
+# Install Rust
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+
 ##############################
 # JetBrains Mono Fonts		 #
 ##############################

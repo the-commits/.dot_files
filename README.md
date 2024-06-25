@@ -11,3 +11,4 @@
 
 
 # Guides
+Install packages `xargs sudo apt-get install < apt_packages.txt`
