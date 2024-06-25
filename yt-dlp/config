@@ -1,6 +1,7 @@
 --ignore-errors
 --add-metadata
 --embed-thumbnail
+--compat-options filename-sanitization
 -o "/001/Videos/%(uploader)s/%(playlist)s/%(playlist_index)s-%(title)s.%(ext)s"
 -f 'bv+ba'
 -S ext
