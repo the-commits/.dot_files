@@ -4,7 +4,6 @@ import = [
   "~/.config/alacritty/window.toml",
   "~/.config/alacritty/font.toml",
   "~/.config/alacritty/colors.toml",
-  "~/.config/alacritty/shell.toml",
 ]
 
 [[keyboard.bindings]]

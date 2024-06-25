@@ -1,13 +1,29 @@
 #!/usr/bin/env bash
 
 DOT_FILES=$(cd $(dirname "${BASH_SOURCE[0]}") && pwd)
-PACKAGES=$DOT_FILES/packages
 CONFIG_PATH=$HOME/.config
 NVIM_CONFIG=$CONFIG_PATH/nvim
 NVIM_PLUGINS=$NVIM_CONFIG/lua/plugins
 EPOCH=$(date +%s%N)
 ARCHIVE=$DOT_FILES/archive/$EPOCH
-NERD_FONT_VERSION="v3.1.1"
+NERD_FONT_VERSION="3.1.1"
+
+# Check machine
+unameOut="$(uname -s)"
+case "${unameOut}" in
+Linux*) machine=Linux ;;
+Darwin*) machine=Mac ;;
+CYGWIN*) machine=Cygwin ;;
+MINGW*) machine=MinGw ;;
+MSYS_NT*) machine=Git ;;
+*) machine="UNKNOWN:${unameOut}" ;;
+esac
+
+echo "We are running on ${machine}"
+if [[ ! "$machine" =~ ^(Linux|Mac)$ ]]; then
+	echo "$machine is not added yet"
+	exit 1
+fi
 
 # Remove brew if existing
 function remove_brew {
@@ -24,81 +40,77 @@ function remove_brew {
 ##############################
 function dl_all_nerd_fonts {
 	mkdir -p $DOT_FILES/fonts
-	curl -s -L -o $DOT_FILES/fonts/NerdFonts_$NERD_FONT_VERSION.zip -A "Mozilla/5.0" https://github.com/ryanoasis/nerd-fonts/archive/refs/tags/$NERD_FONT_VERSION.zip
+	curl -s -L -o $DOT_FILES/fonts/NerdFonts_$NERD_FONT_VERSION.zip -A "Mozilla/5.0" https://github.com/ryanoasis/nerd-fonts/archive/refs/tags/v$NERD_FONT_VERSION.zip
 	if [ -d $DOT_FILES/fonts/ ]; then
-		mkdir -p $HOME/.local/share/fonts
-		unzip -d $HOME/.local/share/fonts $DOT_FILES/fonts/NerdFonts_$NERD_FONT_VERSION.zip
+		unzip $DOT_FILES/fonts/NerdFonts_$NERD_FONT_VERSION.zip
+		cd $DOT_FILES/fonts/nerd-fonts-$NERD_FONT_VERSION && ./install.sh
+		cd $DOT_FILES
+		rm $DOT_FILES/fonts/NerdFonts_$NERD_FONT_VERSION.zip
 	fi
 }
 
-# Bash
-if [ -f $HOME/.bashrc ]; then
-	rm $HOME/.bashrc
+# Rust
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+source "$HOME/.cargo/env"
+
+if [[ $SHELL == *"bash"* ]]; then
+	# Bash
+	if [ -f $HOME/.bashrc ]; then
+		rm $HOME/.bashrc
+	fi
+	if [ -f $HOME/.bash_profile ]; then
+		rm $HOME/.bash_profile
+	fi
+	if [ -f $HOME/.bash_logout ]; then
+		rm $HOME/.bash_logout
+	fi
+	if [ -f $HOME/.bash_aliases ]; then
+		rm $HOME/.bash_aliases
+	fi
+	if [ -f $HOME/.secrets ]; then
+		rm $HOME/.secrets
+	fi
+	ln -sf $DOT_FILES/bash/.bash_aliases $HOME/.bash_aliases
+	ln -sf $DOT_FILES/bash/.bashrc $HOME/.bashrc
+	ln -sf $DOT_FILES/bash/.bash_profile $HOME/.bash_profile
+	ln -sf $DOT_FILES/bash/.bash_logout $HOME/.bash_logout
+	ln -sf $DOT_FILES/bash/.bash_aliases $HOME/.bash_aliases
+	if [ -f $DOT_FILES/bash/.secrets ]; then
+		ln -sf $DOT_FILES/bash/.secrets $HOME/.secrets
+	fi
+	source $DOT_FILES/bash/.bashrc $HOME/.bashrc
 fi
-if [ -f $HOME/.bash_profile ]; then
-	rm $HOME/.bash_profile
+
+# wezterm
+if [ -d $CONFIG_PATH/wezterm ]; then
+	rm -rf $CONFIG_PATH/wezterm
 fi
-if [ -f $HOME/.bash_logout ]; then
-	rm $HOME/.bash_logout
-fi
-if [ -f $HOME/.bash_aliases ]; then
-	rm $HOME/.bash_aliases
-fi
-if [ -f $HOME/.bash_exports ]; then
-	rm $HOME/.bash_exports
-fi
-if [ -f $HOME/.bash_completion ]; then
-	rm $HOME/.bash_completion
-fi
-if [ -f $HOME/.secrets ]; then
-	rm $HOME/.secrets
-fi
-ln -sf $DOT_FILES/bash/.bash_aliases $HOME/.bash_aliases
-ln -sf $DOT_FILES/bash/.bashrc $HOME/.bashrc
-ln -sf $DOT_FILES/bash/.bash_profile $HOME/.bash_profile
-ln -sf $DOT_FILES/bash/.bash_logout $HOME/.bash_logout
-ln -sf $DOT_FILES/bash/.bash_aliases $HOME/.bash_aliases
-ln -sf $DOT_FILES/bash/.bash_exports $HOME/.bash_exports
-ln -sf $DOT_FILES/bash/.bash_completion $HOME/.bash_completion
-if [ -f $DOT_FILES/bash/.secrets ]; then
-	ln -sf $DOT_FILES/bash/.secrets $HOME/.secrets
-fi
-source $DOT_FILES/bash/.bashrc $HOME/.bashrc
+ln -sf $DOT_FILES/wezterm $CONFIG_PATH
 
 # Download fonts
 dl_all_nerd_fonts
 
-# Install requirements
+# Remove brew if apt or snap is available
 if [ -x "$(command -v apt)" ]; then
 	remove_brew
-	sudo apt update -y && sudo apt upgrade -y
-	xargs sudo apt-get install <$PACKAGES/apt_packages.txt
-	sudo apt autoclean && sudo apt clean
+	curl -fsSL https://apt.fury.io/wez/gpg.key | sudo gpg --yes --dearmor -o /usr/share/keyrings/wezterm-fury.gpg
+	echo 'deb [signed-by=/usr/share/keyrings/wezterm-fury.gpg] https://apt.fury.io/wez/ * *' | sudo tee /etc/apt/sources.list.d/wezterm.list
+	sudo apt update -y
+	sudo apt upgrade -y
+	sudo apt install neofetch wezterm cmake pkg-config libfreetype6-dev libfontconfig1-dev libxcb-xfixes0-dev libxkbcommon-dev python3
+	sudo apt autoremove -y
 fi
 
 if [ -x "$(command -v snap)" ]; then
 	remove_brew
-	while IFS="" read -r p || [ -n "$p" ]; do
-		sudo snap install "$p"
-		sudo snap refresh "$p"
-	done <$PACKAGES/snap_packages.txt
-	while IFS="" read -r p || [ -n "$p" ]; do
-		sudo snap install --classic "$p"
-		sudo snap refresh --classic "$p"
-	done <$PACKAGES/snap_classic_packages.txt
+	sudo snap install alacritty --classic
 fi
 
-# tmux
-if [ -f $HOME/.tmux.conf ]; then
-	rm $HOME/.tmux.conf
+# Neofetch
+if [ -d $CONFIG_PATH/neofetch ]; then
+	rm -rf $CONFIG_PATH/neofetch
 fi
-ln -sf $DOT_FILES/tmux/tmux.conf $HOME/.tmux.conf
-
-# Kitty
-if [ -d $CONFIG_PATH/kitty ]; then
-	rm -rf $CONFIG_PATH/kitty
-fi
-ln -sf $DOT_FILES/kitty $CONFIG_PATH
+ln -sf $DOT_FILES/neofetch $CONFIG_PATH
 
 # Neofetch
 if [ -d $CONFIG_PATH/neofetch ]; then
@@ -107,6 +119,11 @@ fi
 ln -sf $DOT_FILES/neofetch $CONFIG_PATH
 
 # NeoVim
+curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim-linux64.tar.gz
+sudo rm -rf /opt/nvim
+sudo tar -C /opt -xzf nvim-linux64.tar.gz
+rm nvim-linux64.tar.gz
+
 if [ -d $CONFIG_PATH/nvim ]; then
 	rm -rf $CONFIG_PATH/nvim
 fi
@@ -119,9 +136,7 @@ fi
 # Install Anaconda
 curl -Lso anaconda.installer.sh https://repo.anaconda.com/archive/Anaconda3-2023.09-0-Linux-x86_64.sh
 bash anaconda.installer.sh
-
-# Install Rust
-curl -s --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+rm anaconda.installer.sh
 
 # Remove pre-existing nvim conf
 rm -rf $HOME/.local/share/nvim
@@ -138,17 +153,13 @@ rm -rf lazygit*
 # Lazyvim
 curl -Lso lazyvim.zip https://github.com/LazyVim/starter/archive/refs/heads/main.zip && unzip lazyvim.zip -d lazyvim
 ln -sf $DOT_FILES/lazyvim/starter-main $CONFIG_PATH/nvim
+rm lazyvim.zip
 
 # Scripts
 mkdir -p $HOME/.local/bin
-ln -sf $DOT_FILES/scripts/update_apt_list $HOME/.local/bin/update_apt_list
-ln -sf $DOT_FILES/scripts/commit_message $HOME/.local/bin/commit_message
-chmod +x $DOT_FILES/scripts/update_apt_list
-chmod +x $DOT_FILES/scripts/commit_message
-
 
 # Looki looki if reboot is needy needy
 if [ -f /var/run/reboot-required ]; then
-  echo 'reboot required'
-  sudo reboot
+	echo 'reboot required'
+	sudo reboot
 fi

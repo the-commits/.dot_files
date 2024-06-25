@@ -1,5 +1,5 @@
 # NeoVim Aliases
-alias vim="snap run nvim"
+alias vim="nvim"
 alias vi="vim"
 alias v="vi"
 
@@ -7,5 +7,6 @@ alias v="vi"
 alias pbcopy='xclip -selection clipboard'
 alias pbpaste='xclip -selection clipboard -o'
 
-# Ai git
-alias gac="(git add . && $HOME/.local/bin/commit_message)& > /dev/null 2>&1"
+# WezTerm
+alias wezterm='flatpak run org.wezfurlong.wezterm'
+

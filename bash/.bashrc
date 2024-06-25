@@ -124,6 +124,8 @@ if [ -f ~/.secrets ]; then
 	. ~/.secrets
 fi
 
+export PATH="$PATH:/opt/nvim-linux64/bin"
+
 if [ -f ~/.bash_exports ]; then
 	. ~/.bash_exports
 fi

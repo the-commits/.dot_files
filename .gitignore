@@ -1,9 +1,9 @@
-fonts
-.secrets
-nerd-fonts-*
 .secrets
 archive
 fonts
 *.zip
+*.tar.gz
+lazyvim/
+alacritty-*/
 *.installer.sh
 .secrets

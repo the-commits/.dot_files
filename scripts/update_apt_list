@@ -1,3 +1,0 @@
-#!/usr/bin/env bash
-. ~/.bashrc
-dpkg-query -W -f='${binary:Package}\n' >$PACKAGES/apt_packages.txt
