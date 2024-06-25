@@ -97,7 +97,7 @@ if [ -x "$(command -v apt)" ]; then
 	echo 'deb [signed-by=/usr/share/keyrings/wezterm-fury.gpg] https://apt.fury.io/wez/ * *' | sudo tee /etc/apt/sources.list.d/wezterm.list
 	sudo apt update -y
 	sudo apt upgrade -y
-	sudo apt install neofetch wezterm cmake pkg-config libfreetype6-dev libfontconfig1-dev libxcb-xfixes0-dev libxkbcommon-dev python3
+	sudo apt install libevent-dev ncurses-dev build-essential bison pkg-config tmux neofetch wezterm cmake pkg-config libfreetype6-dev libfontconfig1-dev libxcb-xfixes0-dev libxkbcommon-dev python3
 	sudo apt autoremove -y
 fi
 
