@@ -8,7 +8,7 @@ require('lspconfig').lua_ls.setup({ capabilities = capabilities })
 require('lspconfig').intelephense.setup({ capabilities = capabilities })
 require('lspconfig').volar.setup({
   capabilities = capabilities,
-  filetypes = {'typescript', 'javascript', 'javascriptreact', 'typescriptreact', 'vue', 'json'}
+  filetypes = { 'typescript', 'javascript', 'javascriptreact', 'typescriptreact', 'vue' }
 })
 require('lspconfig').tailwindcss.setup({ capabilities = capabilities })
 
@@ -21,6 +21,27 @@ require('lspconfig').jsonls.setup({
     },
   },
 })
+
+-- null-ls
+require('null-ls').setup({
+  sources = {
+    require('null-ls').builtins.diagnostics.eslint_d.with({
+      condition = function(utils)
+        return utils.root_has_file({ '.eslintrc.js' })
+      end,
+    }),
+    require('null-ls').builtins.diagnostics.trail_space.with({ disabled_filetypes = { 'NvimTree' } }),
+    require('null-ls').builtins.formatting.eslint_d.with({
+      condition = function(utils)
+        return utils.root_has_file({ '.eslintrc.js' })
+      end,
+    }),
+    require('null-ls').builtins.formatting.prettierd,
+  },
+})
+
+require('mason-null-ls').setup({ automatic_installation = true })
+
 -- Keymaps
 vim.keymap.set('n', '<Leader>d', '<cmd>lua vim.diagnostic.open_float()<CR>')
 vim.keymap.set('n', '[d', '<cmd>lua vim.diagnostic.goto_prev()<CR>')
