@@ -1,4 +1,4 @@
-# dotfiles
+# .dot_files
 - kitty
 - NeoVim
 - tmux
