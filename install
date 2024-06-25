@@ -1,7 +1,35 @@
 #!/usr/bin/env bash
 
 DOT_FILES=$(cd $(dirname "${BASH_SOURCE[0]}") && pwd)
+PACKAGES=$DOT_FILES/packages
 CONFIG_PATH=$HOME/.config
+NVIM_CONFIG=$CONFIG_PATH/nvim
+NVIM_PLUGINS=$NVIM_CONFIG/lua/plugins
+EPOCH=$(date +%s%N)
+ARCHIVE=$DOT_FILES/archive/$EPOCH
+NERD_FONT_VERSION="v3.1.1"
+
+# Remove brew if existing
+function remove_brew {
+	if [ -d /home/linuxbrew/ ]; then
+		test -d $HOME/.linuxbrew && eval "$($HOME/.linuxbrew/bin/brew shellenv)"
+		test -d /home/linuxbrew/.linuxbrew && eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+		/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/uninstall.sh)"
+		sudo rm -rf /home/linuxbrew
+	fi
+}
+
+##############################
+# All Nerd Fonts	     #
+##############################
+function dl_all_nerd_fonts {
+	mkdir -p $DOT_FILES/fonts
+	curl -s -L -o $DOT_FILES/fonts/NerdFonts_$NERD_FONT_VERSION.zip -A "Mozilla/5.0" https://github.com/ryanoasis/nerd-fonts/archive/refs/tags/$NERD_FONT_VERSION.zip
+	if [ -d $DOT_FILES/fonts/ ]; then
+		mkdir -p $HOME/.local/share/fonts
+		unzip -d $HOME/.local/share/fonts $DOT_FILES/fonts/NerdFonts_$NERD_FONT_VERSION.zip
+	fi
+}
 
 # Bash
 if [ -f $HOME/.bashrc ]; then
@@ -13,208 +41,52 @@ fi
 if [ -f $HOME/.bash_logout ]; then
 	rm $HOME/.bash_logout
 fi
-
-ln -sf $DOT_FILES/bash/.bashrc $HOME/.bashrc
-ln -sf $DOT_FILES/bash/.bash_profile $HOME/.bash_profile
-ln -sf $DOT_FILES/bash/.bash_logout $HOME/.bash_logout
-source $DOT_FILES/bash/.bashrc $HOME/.bashrc
-
-##############################
-# JetBrains Mono Fonts	     #
-##############################
-mkdir -p $DOT_FILES/fonts
-curl -o $DOT_FILES/fonts/JetBrainsMono.zip https://www.1001fonts.com/download/jetbrains-mono.zip
-if [ -d $DOT_FILES/fonts/ ]; then
-	mkdir -p $HOME/.local/share/fonts/JetBrainsMono
-	unzip -d $HOME/.local/share/fonts/JetBrainsMono $DOT_FILES/fonts/JetBrainsMono.zip
-fi
-
-# Install requirements
-REQUIREMENTS='curl ansible'
-if [ -x "$(command -v apk)" ];       then sudo apk add --no-cache g++ gcc libc-dev make $REQUIREMENTS
-elif [ -x "$(command -v apt)" ]; then sudo apt-get install build-essential $REQUIREMENTS
-elif [ -x "$(command -v dnf)" ];     then sudo dnf install make automake gcc gcc-c++ kernel-devel $REQUIREMENTS
-elif [ -x "$(command -v pacman)" ];     then sudo pacman -Sy base-devel $REQUIREMENTS
-elif [ -x "$(command -v zypper)" ];  then sudo zypper install -t pattern devel_basis && sudo zypper install $REQUIREMENTS
-else echo "FAILED TO INSTALL PACKAGE: Package manager not found. You must manually install: $REQUIREMENTS">&2; fi
-
-# Brew
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
-
-if [ -d /home/linuxbrew/ ]; then
-	test -d ~/.linuxbrew && eval "$(~/.linuxbrew/bin/brew shellenv)"
-	test -d /home/linuxbrew/.linuxbrew && eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-	
-	# This is in git
-	# test -r ~/.bash_profile && echo "eval \"\$($(brew --prefix)/bin/brew shellenv)\"" >> ~/.bash_profile
-fi
-
-brew vendor-install ruby
-brew install gcc neovim
-
-# Install pipx with brew
-brew install pipx
-brew cleanup --prune 30
-pipx ensurepath completions
-
-# Install multiple php
-brew tap shivammathur/php
-brew install shivammathur/php/php@8.2
-brew install shivammathur/php/php@8.1
-brew install shivammathur/php/php@8.0
-brew install shivammathur/php/php@7.4
-brew install shivammathur/php/php@7.3
-brew install shivammathur/php/php@5.6
-
-sudo ln -sf /home/linuxbrew/.linuxbrew/opt/php@5.6/bin/php /usr/local/bin/php56
-sudo ln -sf /home/linuxbrew/.linuxbrew/opt/php@7.3/bin/php /usr/local/bin/php73
-sudo ln -sf /home/linuxbrew/.linuxbrew/opt/php@7.4/bin/php /usr/local/bin/php74
-sudo ln -sf /home/linuxbrew/.linuxbrew/opt/php@8.0/bin/php /usr/local/bin/php80
-sudo ln -sf /home/linuxbrew/.linuxbrew/opt/php@8.1/bin/php /usr/local/bin/php81
-sudo ln -sf /home/linuxbrew/.linuxbrew/opt/php@8.2/bin/php /usr/local/bin/php82
-sudo ln -sf /home/linuxbrew/.linuxbrew/opt/php@8.2/bin/php /usr/local/bin/php82
-
-# Current php
-sudo ln -sf /home/linuxbrew/.linuxbrew/opt/php@8.2/bin/php /usr/local/bin/php
-# End Brew
-
-# Install poetry
-pipx install --force poetry
-
-# Install ansible
-# pipx install --include-deps ansible
-
-# Run playbooks
-echo "Your password needed! "
-ansible-playbook --ask-become-pass $DOT_FILES/playbooks/main.yaml
-
-# Install Rust
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-
-# tmux
-if [ -f $HOME/.tmux.conf ]; then
-	rm $HOME/.tmux.conf
-fi
-ln -sf $DOT_FILES/tmux/tmux.conf $HOME/.tmux.conf
-
-# Kitty
-if [ -d $CONFIG_PATH/kitty ]; then
-	rm -rf $CONFIG_PATH/kitty
-fi
-ln -sf $DOT_FILES/kitty $CONFIG_PATH
-
-# yt-dlpd
-mkdir -p $HOME/.config/yt-dlp
-ln -sf $DOT_FILES/yt-dlp/config $HOME/.config/yt-dlp/config
-ln -sf $DOT_FILES/yt-dlp/laracasts.config $HOME/.config/yt-dlp/laracasts.config
-
-# NeoVim
-if [ -d $CONFIG_PATH/nvim ]; then
-	rm -rf $CONFIG_PATH/nvim
-fi
-ln -sf $DOT_FILES/nvim $CONFIG_PATH
-
-# Scripts
-mkdir -p $HOME/.local/bin
-ln -sf $DOT_FILES/scripts/t $HOME/.local/bin/t
-
 if [ -f $HOME/.bash_aliases ]; then
 	rm $HOME/.bash_aliases
+fi
+if [ -f $HOME/.bash_exports ]; then
+	rm $HOME/.bash_exports
+fi
+if [ -f $HOME/.bash_completion ]; then
+	rm $HOME/.bash_completion
+fi
+if [ -f $HOME/.secrets ]; then
+	rm $HOME/.secrets
 fi
 ln -sf $DOT_FILES/bash/.bash_aliases $HOME/.bash_aliases
 ln -sf $DOT_FILES/bash/.bashrc $HOME/.bashrc
 ln -sf $DOT_FILES/bash/.bash_profile $HOME/.bash_profile
 ln -sf $DOT_FILES/bash/.bash_logout $HOME/.bash_logout
+ln -sf $DOT_FILES/bash/.bash_aliases $HOME/.bash_aliases
+ln -sf $DOT_FILES/bash/.bash_exports $HOME/.bash_exports
+ln -sf $DOT_FILES/bash/.bash_completion $HOME/.bash_completion
+if [ -f $DOT_FILES/bash/.secrets ]; then
+	ln -sf $DOT_FILES/bash/.secrets $HOME/.secrets
+fi
 source $DOT_FILES/bash/.bashrc $HOME/.bashrc
 
-##############################
-# JetBrains Mono Fonts	     #
-##############################
-mkdir -p $DOT_FILES/fonts
-curl -o $DOT_FILES/fonts/JetBrainsMono.zip https://www.1001fonts.com/download/jetbrains-mono.zip
-if [ -d $DOT_FILES/fonts/ ]; then
-	mkdir -p $HOME/.local/share/fonts/JetBrainsMono
-	unzip -d $HOME/.local/share/fonts/JetBrainsMono $DOT_FILES/fonts/JetBrainsMono.zip
-fi
+# Download fonts
+dl_all_nerd_fonts
 
 # Install requirements
-REQUIREMENTS='curl ansible php-dev'
-if [ -x "$(command -v apk)" ]; then
-	sudo apk add --no-cache g++ gcc libc-dev make $REQUIREMENTS
-elif [ -x "$(command -v apt)" ]; then
-	sudo apt-get install build-essential $REQUIREMENTS
-	xargs sudo apt-get install <$DOT_FILES/playbooks/apt/apt_packages.txt
-elif [ -x "$(command -v dnf)" ]; then
-	sudo dnf install make automake gcc gcc-c++ kernel-devel $REQUIREMENTS
-elif [ -x "$(command -v pacman)" ]; then
-	sudo pacman -Sy base-devel $REQUIREMENTS
-elif [ -x "$(command -v zypper)" ]; then
-	sudo zypper install -t pattern devel_basis && sudo zypper install $REQUIREMENTS
-else echo "FAILED TO INSTALL PACKAGE: Package manager not found. You must manually install: $REQUIREMENTS" >&2; fi
-
-# Brew
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
-
-if [ -d /home/linuxbrew/ ]; then
-	test -d $HOME/.linuxbrew && eval "$($HOME/.linuxbrew/bin/brew shellenv)"
-	test -d /home/linuxbrew/.linuxbrew && eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-
-	# This is in git
-	# test -r ~/.bash_profile && echo "eval \"\$($(brew --prefix)/bin/brew shellenv)\"" >> ~/.bash_profile
+if [ -x "$(command -v apt)" ]; then
+	remove_brew
+	sudo apt update -y && sudo apt upgrade -y
+	xargs sudo apt-get install <$PACKAGES/apt_packages.txt
+	sudo apt autoclean && sudo apt clean
 fi
 
-brew vendor-install ruby
-brew install gcc neovim
-
-# Install pipx with brew
-brew install pipx
-brew cleanup --prune 30
-pipx ensurepath completions
-
-# Install multiple php
-brew tap shivammathur/php
-brew install shivammathur/php/php@8.3
-brew install shivammathur/php/php@8.2
-brew install shivammathur/php/php@8.1
-brew install shivammathur/php/php@8.0
-brew install shivammathur/php/php@7.4
-brew install shivammathur/php/php@7.3
-brew install shivammathur/php/php@5.6
-
-sudo ln -sf /home/linuxbrew/.linuxbrew/opt/php@5.6/bin/php /usr/local/bin/php56
-sudo ln -sf /home/linuxbrew/.linuxbrew/opt/php@7.3/bin/php /usr/local/bin/php73
-sudo ln -sf /home/linuxbrew/.linuxbrew/opt/php@7.4/bin/php /usr/local/bin/php74
-sudo ln -sf /home/linuxbrew/.linuxbrew/opt/php@8.0/bin/php /usr/local/bin/php80
-sudo ln -sf /home/linuxbrew/.linuxbrew/opt/php@8.1/bin/php /usr/local/bin/php81
-sudo ln -sf /home/linuxbrew/.linuxbrew/opt/php@8.2/bin/php /usr/local/bin/php82
-sudo ln -sf /home/linuxbrew/.linuxbrew/opt/php@8.3/bin/php /usr/local/bin/php82
-
-# Current php
-sudo ln -sf /home/linuxbrew/.linuxbrew/opt/php@8.3/bin/php /usr/local/bin/php
-# End Brew
-
-# Install poetry
-pipx install --force poetry
-
-# Install ansible
-# pipx install --include-deps ansible
-
-# Run playbooks
-read -p "Do you want to install with Ansible? [y/N] " choice
-
-case "$choice" in
-y | Y)
-	echo "Installing with Ansible..."
-	echo "Your password needed! "
-	ansible-playbook --ask-become-pass $DOT_FILES/playbooks/main.yaml
-	;;
-*)
-	echo "Skipping Ansible installation."
-	;;
-esac
-
-# Install Rust
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+if [ -x "$(command -v snap)" ]; then
+	remove_brew
+	while IFS="" read -r p || [ -n "$p" ]; do
+		sudo snap install "$p"
+		sudo snap refresh "$p"
+	done <$PACKAGES/snap_packages.txt
+	while IFS="" read -r p || [ -n "$p" ]; do
+		sudo snap install --classic "$p"
+		sudo snap refresh --classic "$p"
+	done <$PACKAGES/snap_classic_packages.txt
+fi
 
 # tmux
 if [ -f $HOME/.tmux.conf ]; then
@@ -228,25 +100,55 @@ if [ -d $CONFIG_PATH/kitty ]; then
 fi
 ln -sf $DOT_FILES/kitty $CONFIG_PATH
 
-# yt-dlp
-mkdir -p $HOME/.config/yt-dlp
-ln -sf $DOT_FILES/yt-dlp/config $HOME/.config/yt-dlp/config
-ln -sf $DOT_FILES/yt-dlp/laracasts.config $HOME/.config/yt-dlp/laracasts.config
+# Neofetch
+if [ -d $CONFIG_PATH/neofetch ]; then
+	rm -rf $CONFIG_PATH/neofetch
+fi
+ln -sf $DOT_FILES/neofetch $CONFIG_PATH
 
 # NeoVim
 if [ -d $CONFIG_PATH/nvim ]; then
 	rm -rf $CONFIG_PATH/nvim
 fi
-# ln -sf $DOT_FILES/nvim $CONFIG_PATH # Old
-# Remove pre-existing nvim conf
-mv $HOME/.config/nvim{,.bak}
-mv $HOME/.local/share/nvim{,.bak}
-mv $HOME/.local/state/nvim{,.bak}
-mv $HOME/.cache/nvim{,.bak}
 
-git clone https://github.com/LazyVim/starter $HOME/.config/nvim
-rm -rf $HOME/.config/nvim/.git
+if [ -d $DOT_FILES/nvim ]; then
+	mkdir -p $ARCHIVE
+	mv -f $DOT_FILES/nvim $ARCHIVE/nvim
+fi
+
+# Install Anaconda
+curl -Lso anaconda.installer.sh https://repo.anaconda.com/archive/Anaconda3-2023.09-0-Linux-x86_64.sh
+bash anaconda.installer.sh
+
+# Install Rust
+curl -s --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+
+# Remove pre-existing nvim conf
+rm -rf $HOME/.local/share/nvim
+rm -rf $HOME/.local/state/nvim
+rm -rf $HOME/.cache/nvim
+
+# Lazygit
+LAZYGIT_VERSION=$(curl -s "https://api.github.com/repos/jesseduffield/lazygit/releases/latest" | grep -Po '"tag_name": "v\K[^"]*')
+curl -Lso lazygit.tar.gz "https://github.com/jesseduffield/lazygit/releases/latest/download/lazygit_${LAZYGIT_VERSION}_Linux_x86_64.tar.gz"
+tar xf lazygit.tar.gz lazygit
+sudo install lazygit /usr/local/bin
+rm -rf lazygit*
+
+# Lazyvim
+curl -Lso lazyvim.zip https://github.com/LazyVim/starter/archive/refs/heads/main.zip && unzip lazyvim.zip -d lazyvim
+ln -sf $DOT_FILES/lazyvim/starter-main $CONFIG_PATH/nvim
 
 # Scripts
 mkdir -p $HOME/.local/bin
-ln -sf $DOT_FILES/scripts/t $HOME/.local/bin/t
+ln -sf $DOT_FILES/scripts/update_apt_list $HOME/.local/bin/update_apt_list
+ln -sf $DOT_FILES/scripts/commit_message $HOME/.local/bin/commit_message
+chmod +x $DOT_FILES/scripts/update_apt_list
+chmod +x $DOT_FILES/scripts/commit_message
+
+
+# Looki looki if reboot is needy needy
+if [ -f /var/run/reboot-required ]; then
+  echo 'reboot required'
+  sudo reboot
+fi
