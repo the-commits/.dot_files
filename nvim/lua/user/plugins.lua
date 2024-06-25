@@ -29,29 +29,35 @@ use('wbthomason/packer.nvim')
 -- Commenting support.
 use('tpope/vim-commentary')
 
--- Add, change and delete surrounding text.
+-- Add, change, and delete surrounding text.
 use('tpope/vim-surround')
+
+-- Useful commands like :Rename and :SudoWrite.
+use('tpope/vim-eunuch')
+
+-- Pairs of handy bracket mappings, like [b and ]b.
+use('tpope/vim-unimpaired')
 
 -- Indent autodetection with editorconfig support.
 use('tpope/vim-sleuth')
 
--- Allow plugins to enable repeating of commands
+-- Allow plugins to enable repeating of commands.
 use('tpope/vim-repeat')
-
--- Navigate between vim and tmux panes
-use('christoomey/vim-tmux-navigator')
 
 -- Add more languages.
 use('sheerun/vim-polyglot')
 
--- Jump to the last place
+-- Navigate seamlessly between Vim windows and Tmux panes.
+use('christoomey/vim-tmux-navigator')
+
+-- Jump to the last location when opening a file.
 use('farmergreg/vim-lastplace')
 
--- Automatically create parent dir
-use('jessarcher/vim-heritage')
+-- Enable * searching with visually selected text.
+use('nelstrom/vim-visual-star-search')
 
--- Grammar checking
-use('rhysd/vim-grammarous')
+-- Automatically create parent dirs when saving.
+use('jessarcher/vim-heritage')
 
 -- Automatically set the working directory to the project root.
 use({
@@ -85,7 +91,7 @@ use({
 use({
   'famiu/bufdelete.nvim',
   config = function()
-    vim.keymap.set('n', '<Leader>q', ':bdelete<CR>')
+    vim.keymap.set('n', '<Leader>q', ':Bdelete<CR>')
   end,
 })
 
@@ -107,6 +113,7 @@ use({
   end,
 })
 
+-- Fuzzy finder
 use({
   'nvim-telescope/telescope.nvim',
   requires = {
@@ -117,95 +124,54 @@ use({
   },
   config = function()
     require('user/plugins/telescope')
-    end
+  end,
 })
 
+-- File tree sidebar
 use({
-    'kyazdani42/nvim-tree.lua',
-    requires = 'kyazdani42/nvim-web-devicons',
-    config = function()
-      require('user/plugins/nvim-tree')
-    end,
-
-  })
-
--- A status line
-use({
-    'nvim-lualine/lualine.nvim',
-    requires = 'kyazdani42/nvim-web-devicons',
-    config = function()
-      require('lualine').setup()
-    end,
+  'kyazdani42/nvim-tree.lua',
+  requires = 'kyazdani42/nvim-web-devicons',
+  config = function ()
+    require('user/plugins/nvim-tree')
+  end
 })
 
--- Display buffers as tabs
+-- A Status line.
 use({
-    'akinsho/bufferline.nvim',
-    requires = 'kyazdani42/nvim-web-devicons',
-    config = function()
-      require('bufferline').setup()
-    end,
+  'nvim-lualine/lualine.nvim',
+  requires = 'kyazdani42/nvim-web-devicons',
+  config = function ()
+    require('lualine').setup()
+  end,
 })
 
--- Display indentation lines
+-- Display buffers as tabs.
 use({
-    'lukas-reineke/indent-blankline.nvim',
-    config = function()
-      require('user/plugins/indent-blankline')
-    end,
+  'akinsho/bufferline.nvim',
+  requires = 'kyazdani42/nvim-web-devicons',
+  config = function()
+    require('user/plugins/bufferline')
+  end,
+})
+
+-- Display indentation lines.
+use({
+  'lukas-reineke/indent-blankline.nvim',
+  config = function()
+    require('user/plugins/indent-blankline')
+  end,
 })
 
 -- Git integration.
 use({
   'lewis6991/gitsigns.nvim',
   config = function()
-    require('gitsigns').setup({
-        signs = {
-          add          = { text = '│' },
-          change       = { text = '│' },
-          delete       = { text = '_' },
-          topdelete    = { text = '‾' },
-          changedelete = { text = '~' },
-          untracked    = { text = '┆' },
-        },
-        signcolumn = true,  -- Toggle with `:Gitsigns toggle_signs`
-        numhl      = false, -- Toggle with `:Gitsigns toggle_numhl`
-        linehl     = false, -- Toggle with `:Gitsigns toggle_linehl`
-        word_diff  = false, -- Toggle with `:Gitsigns toggle_word_diff`
-        watch_gitdir = {
-          interval = 1000,
-          follow_files = true
-        },
-        attach_to_untracked = true,
-        current_line_blame = true, -- Toggle with `:Gitsigns toggle_current_line_blame`
-      current_line_blame_opts = {
-        virt_text = true,
-        virt_text_pos = 'eol', -- 'eol' | 'overlay' | 'right_align'
-        delay = 1000,
-        ignore_whitespace = false,
-      },
-      current_line_blame_formatter = '<author>, <author_time:%Y-%m-%d> - <summary>',
-      sign_priority = 6,
-      update_debounce = 100,
-      status_formatter = nil, -- Use default
-      max_file_length = 40000, -- Disable if file is longer than this (in lines)
-      preview_config = {
-        -- Options passed to nvim_open_win
-        border = 'single',
-        style = 'minimal',
-        relative = 'cursor',
-        row = 0,
-        col = 1
-      },
-      yadm = {
-        enable = false
-      },
-    })
-    vim.keymap.set('n', 'gn', ':Gitsigns next_hunk<CR>')
-    vim.keymap.set('n', 'gp', ':Gitsigns prev_hunk<CR>')
+    require('gitsigns').setup()
+    vim.keymap.set('n', ']h', ':Gitsigns next_hunk<CR>')
+    vim.keymap.set('n', '[h', ':Gitsigns prev_hunk<CR>')
     vim.keymap.set('n', 'gs', ':Gitsigns stage_hunk<CR>')
     vim.keymap.set('n', 'gS', ':Gitsigns undo_stage_hunk<CR>')
-    vim.keymap.set('n', 'gv', ':Gitsigns preview_hunk<CR>')
+    vim.keymap.set('n', 'gp', ':Gitsigns preview_hunk<CR>')
     vim.keymap.set('n', 'gb', ':Gitsigns blame_line<CR>')
   end,
 })
@@ -275,14 +241,41 @@ use({
   },
   config = function()
     require('user/plugins/cmp')
-    require('lspconfig').tailwindcss.setup({})
+  end,
+})
+
+-- PHP Refactoring Tools
+use({
+  'phpactor/phpactor',
+  ft = 'php',
+  run = 'composer install --no-dev --optimize-autoloader',
+  config = function()
+    vim.keymap.set('n', '<Leader>pm', ':PhpactorContextMenu<CR>')
+    vim.keymap.set('n', '<Leader>pn', ':PhpactorClassNew<CR>')
+  end,
+})
+
+-- Project Configuration.
+use({
+  'tpope/vim-projectionist',
+  requires = 'tpope/vim-dispatch',
+  config = function()
+    require('user/plugins/projectionist')
+  end,
+})
+
+-- Testing helper
+use({
+  'vim-test/vim-test',
+  config = function()
+    require('user/plugins/vim-test')
   end,
 })
 
 -- Automatically set up your configuration after cloning packer.nvim
 -- Put this at the end after all plugins
 if packer_bootstrap then
-  require('packer').sync()
+    require('packer').sync()
 end
 
 vim.cmd([[
