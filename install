@@ -3,15 +3,34 @@
 DOT_FILES=$(cd $(dirname "${BASH_SOURCE[0]}") && pwd)
 CONFIG_PATH=$HOME/.config
 
-# Add fonts manually for now
+##############################
+# Add fonts manually for now #
+##############################
 
 # Bash
-rm $HOME/.bashrc $HOME/.bash_profile $HOME/.bash_logout
+if [ -f $HOME/.bashrc ]; then
+	rm $HOME/.bashrc
+fi
+if [ -f $HOME/.bash_profile ]; then
+	rm $HOME/.bash_profile
+fi
+if [ -f $HOME/.bash_logout ]; then
+	rm $HOME/.bash_logout
+fi
+
 ln -sf $DOT_FILES/bash/.bashrc $HOME/.bashrc
 ln -sf $DOT_FILES/bash/.bash_profile $HOME/.bash_profile
 ln -sf $DOT_FILES/bash/.bash_logout $HOME/.bash_logout
 
+# tmux
+if [ -f $HOME/.tmux.conf ]; then
+	rm $HOME/.tmux.conf
+fi
+ln -sf $DOTFILES/tmux/tmux.conf $HOME/.tmux.conf
+
 # Kitty
-rm -rf $CONFIG_PATH/kitty
+if [ -d $CONFIG_PATH/kitty ]; then
+	rm -rf $CONFIG_PATH/kitty
+fi
 ln -sf $DOT_FILES/kitty $CONFIG_PATH
 
