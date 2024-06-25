@@ -71,17 +71,6 @@ sudo ln -sf /home/linuxbrew/.linuxbrew/opt/php@8.2/bin/php /usr/local/bin/php82
 # Current php
 sudo ln -sf /home/linuxbrew/.linuxbrew/opt/php@8.2/bin/php /usr/local/bin/php
 
-# Install pipx with brew
-brew install pipx
-brew cleanup --prune 30
-# End Brew
-
-pipx ensurepath completions
-
-# Install poetry
-pipx install poetry
-
-
 # Composer
 COMPOSER=/usr/local/bin/composer
 if [ ! -f "$COMPOSER" ]; then
@@ -103,3 +92,19 @@ if [ -d $CONFIG_PATH/nvim ]; then
 	rm -rf $CONFIG_PATH/nvim
 fi
 ln -sf $DOT_FILES/nvim $CONFIG_PATH
+
+# i3wm
+if [ -d $CONFIG_PATH/i3 ]; then
+	rm -rf $CONFIG_PATH/i3
+fi
+ln -sf $DOT_FILES/i3 $CONFIG_PATH
+
+# Install pipx with brew
+brew install pipx
+brew cleanup --prune 30
+# End Brew
+
+pipx ensurepath completions
+
+# Install poetry
+pipx install --force poetry
