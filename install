@@ -7,6 +7,7 @@ NVIM_PLUGINS=$NVIM_CONFIG/lua/plugins
 EPOCH=$(date +%s%N)
 ARCHIVE=$DOT_FILES/archive/$EPOCH
 NERD_FONT_VERSION="3.1.1"
+TMUX_VERSION="3.4"
 
 function init {
 	# Check machine
@@ -141,6 +142,17 @@ function install_bash {
 }
 # tmux
 function install_tmux {
+	# https://github.com/tmux/tmux/wiki/Installing
+	mkdir -p $DOT_FILES/modules
+	rm -rf $DOT_FILES/modules/tmux
+	git submodule add --force https://github.com/tmux/tmux.git $DOT_FILES/modules/tmux
+	cd $DOT_FILES/modules/tmux
+	git fetch --all
+	git checkout tags/$TMUX_VERSION
+	sh autogen.sh
+	./configure
+	make && sudo make install
+	sudo ln -sf $DOT_FILES/modules/tmux /usr/local/bin/tmux
 	if [ -f $HOME/.tmux.conf ]; then
 		rm $HOME/.tmux.conf
 	fi
@@ -150,6 +162,7 @@ function install_tmux {
 init
 confirm "Configurate bash files? [y/N]" && install_bash
 confirm "Do you want to install the nerd fonts?[y/N]" && install_nerd_fonts
+confirm "Do you want to install tmux?[y/N]" && install_tmux
 exit 0
 
 # Remove brew if apt or snap is available
