@@ -1,5 +1,2 @@
-vim.cmd('colorscheme Tomorrow-Night-Blue')
-
-require('user/plugins')
-require('user/options')
-require('user/keymaps')
+-- bootstrap lazy.nvim, LazyVim and your plugins
+require("config.lazy")

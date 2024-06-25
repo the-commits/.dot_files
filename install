@@ -46,6 +46,7 @@ function dl_all_nerd_fonts {
 		cd $DOT_FILES/fonts/nerd-fonts-$NERD_FONT_VERSION && ./install.sh
 		cd $DOT_FILES
 		rm $DOT_FILES/fonts/NerdFonts_$NERD_FONT_VERSION.zip
+		rm $DOT_FILES/fonts/nerd-fonts-$NERD_FONT_VERSION
 	fi
 }
 
@@ -128,9 +129,16 @@ if [ -d $CONFIG_PATH/nvim ]; then
 	rm -rf $CONFIG_PATH/nvim
 fi
 
+mkdir -p $CONFIG_PATH/nvim
+
+# Lazyvim
+curl -Lso lazyvim.zip https://github.com/LazyVim/starter/archive/refs/heads/main.zip && unzip lazyvim.zip -d lazyvim
+cp -ra $DOT_FILES/lazyvim/starter-main/* $CONFIG_PATH/nvim/
+rm lazyvim.zip
+
 if [ -d $DOT_FILES/nvim ]; then
-	mkdir -p $ARCHIVE
-	mv -f $DOT_FILES/nvim $ARCHIVE/nvim
+	ln -sf $DOT_FILES/nvim/lua/user/plugins/* $CONFIG_PATH/nvim/lua/plugins/
+	ln -sf $DOT_FILES/nvim/lua/user/config/* $CONFIG_PATH/nvim/lua/config/
 fi
 
 # Install Anaconda
@@ -149,11 +157,6 @@ curl -Lso lazygit.tar.gz "https://github.com/jesseduffield/lazygit/releases/late
 tar xf lazygit.tar.gz lazygit
 sudo install lazygit /usr/local/bin
 rm -rf lazygit*
-
-# Lazyvim
-curl -Lso lazyvim.zip https://github.com/LazyVim/starter/archive/refs/heads/main.zip && unzip lazyvim.zip -d lazyvim
-ln -sf $DOT_FILES/lazyvim/starter-main $CONFIG_PATH/nvim
-rm lazyvim.zip
 
 # Scripts
 mkdir -p $HOME/.local/bin
