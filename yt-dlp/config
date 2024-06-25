@@ -7,7 +7,7 @@
 --cookies "${HOME}/cookies.txt"
 --no-clean-info-json
 --write-info-json
---write-comme
+--write-comments
 --batch-file "${HOME}/batch-yt.txt"
 --no-overwrites
 --continue
