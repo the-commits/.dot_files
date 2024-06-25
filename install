@@ -68,6 +68,9 @@ if [[ $SHELL == *"bash"* ]]; then
 	if [ -f $HOME/.bash_aliases ]; then
 		rm $HOME/.bash_aliases
 	fi
+	if [ -f $HOME/.bash_func ]; then
+		rm $HOME/.bash_func
+	fi
 	if [ -f $HOME/.secrets ]; then
 		rm $HOME/.secrets
 	fi
@@ -76,6 +79,7 @@ if [[ $SHELL == *"bash"* ]]; then
 	ln -sf $DOT_FILES/bash/.bash_profile $HOME/.bash_profile
 	ln -sf $DOT_FILES/bash/.bash_logout $HOME/.bash_logout
 	ln -sf $DOT_FILES/bash/.bash_aliases $HOME/.bash_aliases
+	ln -sf $DOT_FILES/bash/.bash_func $HOME/.bash_func
 	if [ -f $DOT_FILES/bash/.secrets ]; then
 		ln -sf $DOT_FILES/bash/.secrets $HOME/.secrets
 	fi
