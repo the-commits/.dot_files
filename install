@@ -107,3 +107,6 @@ pipx ensurepath completions
 
 # Install poetry
 pipx install --force poetry
+
+# Install ansible
+pipx install --include-deps ansible
