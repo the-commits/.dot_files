@@ -93,4 +93,7 @@ alias vi=vim
 alias vim=nvim
 
 export VISUAL=nvim
-export EDITORU="$VISUAL"
+export EDITOR="$VISUAL"
+
+# Add local scripts to path
+export PATH=$HOME/.local/bin:$PATH
