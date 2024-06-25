@@ -3,6 +3,11 @@
 DOT_FILES=$(cd $(dirname "${BASH_SOURCE[0]}") && pwd)
 CONFIG_PATH=$HOME/.config
 
+rm $HOME/.bashrc $HOME/.bash_profile $HOME/.bash_logout
+ln -sf $DOT_FILES/bash/.bashrc $HOME/.bashrc
+ln -sf $DOT_FILES/bash/.bash_profile $HOME/.bash_profile
+ln -sf $DOT_FILES/bash/.bash_logout $HOME/.bash_logout
+
 rm -rf $CONFIG_PATH/kitty
 ln -sf $DOT_FILES/kitty $CONFIG_PATH
 
