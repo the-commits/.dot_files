@@ -1,14 +1,18 @@
 --ignore-errors
 --add-metadata
 --embed-thumbnail
--o "${HOME}/Video/%(uploader)s/%(playlist)s/[%(playlist_index)s]%(title)s.%(ext)s"
+-o "/home/magnus/Videos/YouTube/%(playlist)s/%(uploader)s/[%(playlist_index)s]%(title)s.%(ext)s"
 -f b
+-S ext
+--cookies "${HOME}/cookies.txt"
 --no-clean-info-json
 --write-info-json
 --write-comments
---batch-file "${HOME}/batch-yt-dlp.txt"
+--batch-file "${HOME}/batch-yt.txt"
 --no-overwrites
 --continue
 --mtime
 --write-thumbnail
 --write-link
+--download-archive "${HOME}/archive.txt"
+-N 4
