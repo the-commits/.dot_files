@@ -121,3 +121,8 @@ else
 fi
 unset __conda_setup
 # <<< conda initialize <<<
+. "$HOME/.cargo/env"
+
+
+# Aliases
+alias update-pacman="sudo pacman -Sy endeavouros-keyring && sudo pacman -Syu"
