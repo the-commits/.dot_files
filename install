@@ -93,6 +93,13 @@ if [ -d $CONFIG_PATH/nvim ]; then
 fi
 ln -sf $DOT_FILES/nvim $CONFIG_PATH
 
+# Polybar
+if [ -d $CONFIG_PATH/polybar ]; then
+	rm -rf $CONFIG_PATH/polybar
+fi
+ln -sf $DOT_FILES/polybar $CONFIG_PATH
+
+
 # i3wm
 if [ -d $CONFIG_PATH/i3 ]; then
 	rm -rf $CONFIG_PATH/i3
