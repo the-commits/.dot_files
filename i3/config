@@ -201,7 +201,10 @@ gaps inner 10
 gaps outer 5
 
 #Background
-exec sh ~/.fehbg
+exec sh $HOME/.fehbg
 
 # Take screenshots
-bindsym $mod+z exec "scrot -e 'mv $f ~/Bilder/Screenshots/'"
+bindsym $mod+z exec "scrot -e 'mv $f $HOME/Bilder/Screenshots/'"
+
+# Start polybar
+exec_always --no-startup-id $HOME/.config/polybar/launch.sh
