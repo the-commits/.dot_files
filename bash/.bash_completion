@@ -197,4 +197,4 @@ _poetry_dddfd872a96e497d_complete()
 }
 
 complete -o default -F _poetry_dddfd872a96e497d_complete poetry
-complete -o default -F _poetry_dddfd872a96e497d_complete /home/mangebang/anaconda3/envs/super-smart-static-stan/bin/poetry
+complete -o default -F _poetry_dddfd872a96e497d_complete $HOME/anaconda3/envs/super-smart-static-stan/bin/poetry

@@ -1,6 +1,6 @@
 # NeoVim Aliases
-alias vim="nvim"
-alias vi="vim"
+# alias vim="nvim"
+alias vi="nvim"
 alias v="vi"
 
 # Copy/paste
