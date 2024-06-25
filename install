@@ -73,7 +73,7 @@ sudo ln -sf /home/linuxbrew/.linuxbrew/opt/php@8.2/bin/php /usr/local/bin/php
 
 # Install pipx with brew
 brew install pipx
-brew cleanup --prune
+brew cleanup --prune 30
 # End Brew
 
 pipx ensurepath completions
