@@ -1,3 +1,7 @@
 function mullvad_info {
     curl --silent https://am.i.mullvad.net/json | jq .
 }
+function webcp() {
+	wget --mirror --convert-links --adjust-extension --page-requisites --no-parent $1
+}
+

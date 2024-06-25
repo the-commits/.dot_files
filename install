@@ -49,7 +49,7 @@ function remove_brew {
 ##############################
 # All Nerd Fonts	     #
 ##############################
-function dl_all_nerd_fonts {
+function install_nerd_fonts {
 	mkdir -p $DOT_FILES/fonts
 	if [ -d $DOT_FILES/fonts/ ]; then
 		if [ ! -f $DOT_FILES/fonts/NerdFonts_v$NERD_FONT_VERSION.zip ]; then
@@ -61,7 +61,6 @@ function dl_all_nerd_fonts {
 		fi
 		if [ -d $DOT_FILES/fonts/nerd-fonts-$NERD_FONT_VERSION ]; then
 			$DOT_FILES/fonts/nerd-fonts-$NERD_FONT_VERSION/install.sh
-			exit 0
 		else
 			echo "Can not find nerd-fonts directory"
 			echo "$DOT_FILES/fonts/nerd-fonts-$NERD_FONT_VERSION"
@@ -79,7 +78,6 @@ function install_rust {
 # Bash
 function install_bash {
 	if [[ $SHELL == *"bash"* ]]; then
-
 		if [ -f $HOME/.bashrc ]; then
 			rm $HOME/.bashrc
 		fi
@@ -95,17 +93,48 @@ function install_bash {
 		if [ -f $HOME/.bash_func ]; then
 			rm $HOME/.bash_func
 		fi
+		if [ -f $HOME/.bash_exports ]; then
+			rm $HOME/.bash_exports
+		fi
+		if [ -f $HOME/.bash_completion ]; then
+			rm $HOME/.bash_completion
+		fi
 		if [ -f $HOME/.secrets ]; then
 			rm $HOME/.secrets
 		fi
-		ln -sf $DOT_FILES/bash/.bash_aliases $HOME/.bash_aliases
-		ln -sf $DOT_FILES/bash/.bashrc $HOME/.bashrc
-		ln -sf $DOT_FILES/bash/.bash_profile $HOME/.bash_profile
-		ln -sf $DOT_FILES/bash/.bash_logout $HOME/.bash_logout
-		ln -sf $DOT_FILES/bash/.bash_aliases $HOME/.bash_aliases
-		ln -sf $DOT_FILES/bash/.bash_func $HOME/.bash_func
+		if [ -d $HOME/projects/.dot_files/packages ]; then
+			rm -rf $HOME/projects/.dot_files/packages
+		fi
+		if [ -d $DOT_FILES/bash/packages ]; then
+			mkdir -p $HOME/projects/.dot_files/packages
+			ln -sf $DOT_FILES/bash/packages $HOME/projects/.dot_files/packages
+		fi
+		if [ -f $DOT_FILES/bash/.bash_exports ]; then
+			ln -sf $DOT_FILES/bash/.bash_exports $HOME/.bash_exports
+		fi
+		if [ -f $DOT_FILES/bash/.bash_completion ]; then
+			ln -sf $DOT_FILES/bash/.bash_completion $HOME/.bash_completion
+		fi
+		if [ -f $DOT_FILES/bash/.bash_aliases ]; then
+			ln -sf $DOT_FILES/bash/.bash_aliases $HOME/.bash_aliases
+		fi
+		if [ -f $DOT_FILES/bash/.bash_profile ]; then
+			ln -sf $DOT_FILES/bash/.bash_profile $HOME/.bash_profile
+		fi
+		if [ -f $DOT_FILES/bash/.bash_logout ]; then
+			ln -sf $DOT_FILES/bash/.bash_logout $HOME/.bash_logout
+		fi
+		if [ -f $DOT_FILES/bash/.bash_aliases ]; then
+			ln -sf $DOT_FILES/bash/.bash_aliases $HOME/.bash_aliases
+		fi
+		if [ -f $DOT_FILES/bash/.bash_func ]; then
+			ln -sf $DOT_FILES/bash/.bash_func $HOME/.bash_func
+		fi
 		if [ -f $DOT_FILES/bash/.secrets ]; then
 			ln -sf $DOT_FILES/bash/.secrets $HOME/.secrets
+		fi
+		if [ -f $DOT_FILES/bash/.bashrc ]; then
+			ln -sf $DOT_FILES/bash/.bashrc $HOME/.bashrc
 		fi
 		source $DOT_FILES/bash/.bashrc $HOME/.bashrc
 	fi
@@ -117,10 +146,11 @@ function install_tmux {
 	fi
 	ln -sf $DOT_FILES/tmux/tmux.conf $HOME/.tmux.conf
 }
+
 init
-confirm "Do you want to install the nerd fonts?" && dl_all_nerd_fonts
+confirm "Configurate bash files? [y/N]" && install_bash
+confirm "Do you want to install the nerd fonts?[y/N]" && install_nerd_fonts
 exit 0
-# Download fonts
 
 # Remove brew if apt or snap is available
 if [ -x "$(command -v apt)" ]; then

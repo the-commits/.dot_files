@@ -9,3 +9,6 @@ alias pbpaste='xclip -selection clipboard -o'
 
 # Start SOCKSv5 proxy
 alias proxy="ssh -D 1080 -f -C -q -N socks5"
+
+# laravel-sail
+alias sail='[ -f sail ] && sh sail || sh vendor/bin/sail'

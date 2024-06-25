@@ -1,2 +1,5 @@
 # Python bin etc
 PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/mangebang/.local/bin
+export PATH=/home/mangebang/Documents/Repos/emsdk:/home/mangebang/Documents/Repos/emsdk/upstream/emscripten:/home/mangebang/.rbenv/bin:/home/mangebang/.nvm/versions/node/v20.11.0/bin:/home/mangebang/anaconda3/bin:/home/mangebang/anaconda3/condabin:/home/mangebang/.cargo/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin://home/mangebang/.local/bin:/opt/nvim-linux64/bin
+export EMSDK=/home/mangebang/Documents/Repos/emsdk
+export EMSDK_NODE=/home/mangebang/Documents/Repos/emsdk/node/16.20.0_64bit/bin/node
