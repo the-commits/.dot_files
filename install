@@ -14,6 +14,7 @@ if [ -f $HOME/.bash_logout ]; then
 	rm $HOME/.bash_logout
 fi
 
+ln -sf $DOT_FILES/bash/.bash_aliases $HOME/.bash_aliases
 ln -sf $DOT_FILES/bash/.bashrc $HOME/.bashrc
 ln -sf $DOT_FILES/bash/.bash_profile $HOME/.bash_profile
 ln -sf $DOT_FILES/bash/.bash_logout $HOME/.bash_logout
@@ -42,7 +43,7 @@ else echo "FAILED TO INSTALL PACKAGE: Package manager not found. You must manual
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
 
 if [ -d /home/linuxbrew/ ]; then
-	test -d ~/.linuxbrew && eval "$(~/.linuxbrew/bin/brew shellenv)"
+	test -d $HOME/.linuxbrew && eval "$($HOME/.linuxbrew/bin/brew shellenv)"
 	test -d /home/linuxbrew/.linuxbrew && eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 	
 	# This is in git
@@ -114,7 +115,7 @@ if [ -d $CONFIG_PATH/kitty ]; then
 fi
 ln -sf $DOT_FILES/kitty $CONFIG_PATH
 
-# yt-dlpd
+# yt-dlp
 mkdir -p $HOME/.config/yt-dlp
 ln -sf $DOT_FILES/yt-dlp/config $HOME/.config/yt-dlp/config
 ln -sf $DOT_FILES/yt-dlp/laracasts.config $HOME/.config/yt-dlp/laracasts.config
@@ -123,7 +124,15 @@ ln -sf $DOT_FILES/yt-dlp/laracasts.config $HOME/.config/yt-dlp/laracasts.config
 if [ -d $CONFIG_PATH/nvim ]; then
 	rm -rf $CONFIG_PATH/nvim
 fi
-ln -sf $DOT_FILES/nvim $CONFIG_PATH
+# ln -sf $DOT_FILES/nvim $CONFIG_PATH # Old
+# Remove pre-existing nvim conf
+mv $HOME/.config/nvim{,.bak}
+mv $HOME/.local/share/nvim{,.bak}
+mv $HOME/.local/state/nvim{,.bak}
+mv $HOME/.cache/nvim{,.bak}
+
+git clone https://github.com/LazyVim/starter $HOME/.config/nvim
+rm -rf $HOME/.config/nvim/.git
 
 # Scripts
 mkdir -p $HOME/.local/bin
