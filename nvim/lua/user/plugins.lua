@@ -50,6 +50,9 @@ use('farmergreg/vim-lastplace')
 -- Automatically create parent dir
 use('jessarcher/vim-heritage')
 
+-- Grammar checking
+use('rhysd/vim-grammarous')
+
 -- Automatically set the working directory to the project root.
 use({
   'airblade/vim-rooter',
