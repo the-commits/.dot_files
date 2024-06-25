@@ -1,0 +1,3 @@
+[submodule "/home/mangebang/Documents/Repos/.dot_files/modules/tmux"]
+	path = /home/mangebang/Documents/Repos/.dot_files/modules/tmux
+	url = https://github.com/tmux/tmux.git
