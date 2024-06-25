@@ -6,3 +6,4 @@ archive
 fonts
 *.zip
 *.installer.sh
+.secrets
