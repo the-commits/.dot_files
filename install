@@ -70,6 +70,9 @@ mkdir -p $HOME/.config/yt-dlp
 ln -sf $DOT_FILES/yt-dlp/config $HOME/.config/yt-dlp/config
 ln -sf $DOT_FILES/yt-dlp/laracasts.config $HOME/.config/yt-dlp/laracasts.config
 
+# phpactor for nvim
+yay -S phpactor
+
 # NeoVim
 if [ -d $CONFIG_PATH/nvim ]; then
 	rm -rf $CONFIG_PATH/nvim
