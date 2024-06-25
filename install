@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 
 DOT_FILES=$(cd $(dirname "${BASH_SOURCE[0]}") && pwd)
+CONFIG_PATH=$HOME/.config
 
-ln -sfv $DOT_FILES/kitty $HOME/.config/kitty
+rm -rf $CONFIG_PATH/kitty
+ln -sf $DOT_FILES/kitty $CONFIG_PATH
 
