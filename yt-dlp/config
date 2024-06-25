@@ -1,7 +1,7 @@
 --ignore-errors
 --add-metadata
 --embed-thumbnail
--o "/home/magnus/Videos/YouTube/%(playlist)s/%(uploader)s/[%(playlist_index)s]%(title)s.%(ext)s"
+-o "/home/magnus/Video/YouTube/%(playlist)s/%(uploader)s/[%(playlist_index)s]%(title)s.%(ext)s"
 -f b
 -S ext
 --cookies "${HOME}/cookies.txt"

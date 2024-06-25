@@ -37,3 +37,6 @@ vim.keymap.set('n', '<A-j>', ':move .+1<CR>==')
 vim.keymap.set('n', '<A-k>', ':move .-2<CR>==')
 vim.keymap.set('v', '<A-j>', ":move '>+1<CR>gv=gv")
 vim.keymap.set('v', '<A-k>', ":move '<-2<CR>gv=gv")
+
+-- processing-java
+vim.keymap.set('n', '<C-M-p><C-M-r>', ':!processing-java --sketch=`pwd` --output=`pwd`/output_dir --force --run<CR><CR>')
