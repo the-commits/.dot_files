@@ -37,3 +37,7 @@ ln -sf $DOT_FILES/kitty $CONFIG_PATH
 # Scripts
 mkdir -p $HOME/.local/bin
 ln -sf $DOT_FILES/scripts/t $HOME/.local/bin/t
+
+# yt-dlp
+mkdir -p $HOME/.config/yt-dlp
+ln -sf $DOT_FILES/yt-dlp/config $HOME/.config/yt-dlp/config

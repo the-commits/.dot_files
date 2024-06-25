@@ -1,0 +1,14 @@
+--ignore-errors
+--add-metadata
+--embed-thumbnail
+-o "${HOME}/Video/%(uploader)s/%(playlist)s/[%(playlist_index)s]%(title)s.%(ext)s"
+-f b
+--no-clean-info-json
+--write-info-json
+--write-comments
+--batch-file "${HOME}/batch-yt-dlp.txt"
+--no-overwrites
+--continue
+--mtime
+--write-thumbnail
+--write-link
