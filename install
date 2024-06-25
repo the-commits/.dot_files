@@ -98,12 +98,6 @@ if [ -d $CONFIG_PATH/nvim ]; then
 fi
 ln -sf $DOT_FILES/nvim $CONFIG_PATH
 
-# Polybar
-if [ -d $CONFIG_PATH/polybar ]; then
-	rm -rf $CONFIG_PATH/polybar
-fi
-ln -sf $DOT_FILES/polybar $CONFIG_PATH
-
 # Install pipx with brew
 brew install pipx
 brew cleanup --prune 30
