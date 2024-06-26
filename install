@@ -137,6 +137,12 @@ function install_bash {
 		if [ -f $DOT_FILES/bash/.bashrc ]; then
 			ln -sf $DOT_FILES/bash/.bashrc $HOME/.bashrc
 		fi
+		if [ -d $DOT_FILES/modules/.bash-git-prompt ]; then
+			rm -rf $DOT_FILES/modules/.bash-git-prompt
+		fi
+		mkdir -p $DOT_FILES/modules
+		git submodule add --force https://github.com/magicmonty/bash-git-prompt.git $DOT_FILES/modules/.bash-git-prompt
+		ln -sf $DOT_FILES/modules/.bash-git-prompt $HOME/.bash-git-prompt
 		source $DOT_FILES/bash/.bashrc $HOME/.bashrc
 	fi
 }
