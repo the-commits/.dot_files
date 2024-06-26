@@ -106,6 +106,9 @@ function install_bash {
 		if [ -d $HOME/projects/.dot_files/packages ]; then
 			rm -rf $HOME/projects/.dot_files/packages
 		fi
+		if [ -d $HOME/.bash-git-prompt ]; then
+			rm -rf $HOME/.bash-git-prompt
+		fi
 		if [ -d $DOT_FILES/bash/packages ]; then
 			mkdir -p $HOME/projects/.dot_files/packages
 			ln -sf $DOT_FILES/bash/packages $HOME/projects/.dot_files/packages
