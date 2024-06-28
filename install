@@ -281,7 +281,7 @@ confirm "Do you want to install Lazyvim?[y/N]" && install_lazyvim
 confirm "Do you want to install Rust?[y/N]" && install_rust
 confirm "Do you want to install Anaconda?[y/N]" && install_anaconda
 confirm "Do you want to install Lazygit?[y/N]" && install_lazygit
-confirm "Install docker?[y/N]" && ./install_docker.sh
+confirm "Install docker?[y/N]" && $DOT_FILES/install_docker.sh
 if [ -x "$(command -v snap)" ]; then
 	remove_brew
 	confirm "Do you want to install alacritty[y/N]" && sudo snap install alacritty --classic
