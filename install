@@ -17,6 +17,8 @@ function check_commands {
 		if [ ! command -v "$cmd" ] &>/dev/null; then
 			echo "$cmd could not be found"
 			exit 1
+		else
+			echo "$cmd exists"
 		fi
 	done
 }
