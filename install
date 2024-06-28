@@ -22,7 +22,6 @@ function init {
 	esac
 
 	echo "We are running on ${machine}"
-	install_unzip
 	if [[ ! "$machine" =~ ^(Linux|Mac)$ ]]; then
 		echo "$machine is not added yet"
 		exit 1
@@ -179,6 +178,7 @@ function install_tmux {
 }
 
 init
+install_unzip
 confirm "Configurate bash files? [y/N]" && install_bash
 confirm "Do you want to install the nerd fonts?[y/N]" && install_nerd_fonts
 confirm "Do you want to install tmux?[y/N]" && install_tmux
