@@ -241,7 +241,7 @@ function install_neovim {
 		rm -rf $CONFIG_PATH/nvim
 	fi
 	mkdir -p $CONFIG_PATH/nvim
-	curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim-linux64.tar.gz
+	curl -sLO https://github.com/neovim/neovim/releases/latest/download/nvim-linux64.tar.gz
 	sudo rm -rf /opt/nvim
 	sudo tar -C /opt -xzf nvim-linux64.tar.gz
 	rm nvim-linux64.tar.gz
@@ -253,8 +253,8 @@ function install_lazyvim {
 	cp -ra $DOT_FILES/lazyvim/starter-main/* $CONFIG_PATH/nvim/
 	rm lazyvim.zip
 	if [ -d $DOT_FILES/nvim ]; then
-		ln -sf $DOT_FILES/nvim/lua/user/plugins/* $CONFIG_PATH/nvim/lua/plugins/
-		ln -sf $DOT_FILES/nvim/lua/user/config/* $CONFIG_PATH/nvim/lua/config/
+		ln -sf $DOT_FILES/nvim/lua/user/plugins $CONFIG_PATH/nvim/lua/plugins
+		ln -sf $DOT_FILES/nvim/lua/user/config $CONFIG_PATH/nvim/lua/config
 	fi
 }
 # Install Anaconda
