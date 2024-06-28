@@ -15,9 +15,36 @@ function check_commands {
 	for cmd in "${commands[@]}"; do
 		if ! command -v "$cmd" &>/dev/null; then
 			echo "$cmd needs to be installed"
+			suggest_install_command "$cmd"
 			exit 1
 		fi
 	done
+}
+# Suggest install command based on package manager
+function suggest_install_command {
+	local cmd=$1
+	case "$cmd" in
+	make)
+		if [ "$machine" == "Linux" ]; then
+			if command -v apt &>/dev/null; then
+				echo "You can install $cmd using: sudo apt update && sudo apt install build-essential"
+			elif command -v yum &>/dev/null; then
+				echo "You can install $cmd using: sudo yum groupinstall 'Development Tools'"
+			elif command -v dnf &>/dev/null; then
+				echo "You can install $cmd using: sudo dnf groupinstall 'Development Tools'"
+			elif command -v zypper &>/dev/null; then
+				echo "You can install $cmd using: sudo zypper install -t pattern devel_basis"
+			else
+				echo "Please install $cmd using your package manager."
+			fi
+		elif [ "$machine" == "Mac" ]; then
+			echo "You can install $cmd using: xcode-select --install"
+		fi
+		;;
+	*)
+		echo "Please install $cmd using your package manager."
+		;;
+	esac
 }
 function init {
 	# Check machine
