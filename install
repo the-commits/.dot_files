@@ -8,7 +8,7 @@ EPOCH=$(date +%s%N)
 ARCHIVE=$DOT_FILES/archive/$EPOCH
 NERD_FONT_VERSION="3.1.1"
 TMUX_VERSION="3.4"
-REQUIREMENTS=(sudo curl make unzip autoconf automake libtoolize pkg-config libevent-dev)
+REQUIREMENTS=(sudo curl make unzip autoconf automake libtoolize pkg-config)
 # Check if commands exist
 function check_commands {
 	local commands=("$@")
