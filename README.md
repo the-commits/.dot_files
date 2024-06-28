@@ -33,7 +33,8 @@ Ensure the following dependencies are installed on your system:
 You can install these dependencies on Ubuntu using:
 ```bash
 sudo apt update
-sudo apt install sudo curl make unzip autoconf automake libtoolize pkg-config libevent-dev bison ncurses-dev build-essential cmake libfreetype6-dev libfontconfig1-dev libxcb-xfixes0-dev libxkbcommon-dev python3```
+sudo apt install sudo curl make unzip autoconf automake libtoolize pkg-config libevent-dev bison ncurses-dev build-essential cmake libfreetype6-dev libfontconfig1-dev libxcb-xfixes0-dev libxkbcommon-dev python3
+```
 
 ### Rocky Linux
 For Rocky Linux, use dnf (or yum on older versions) to install dependencies:
