@@ -9,16 +9,13 @@ ARCHIVE=$DOT_FILES/archive/$EPOCH
 NERD_FONT_VERSION="3.1.1"
 TMUX_VERSION="3.4"
 REQUIREMENTS=(sudo curl make unzip)
-
 # Check if commands exist
 function check_commands {
 	local commands=("$@")
 	for cmd in "${commands[@]}"; do
-		if [ ! command -v "$cmd" ] &>/dev/null; then
-			echo "$cmd could not be found"
+		if ! command -v "$cmd" &>/dev/null; then
+			echo "$cmd needs to be installed"
 			exit 1
-		else
-			echo "$cmd exists"
 		fi
 	done
 }
