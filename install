@@ -283,6 +283,7 @@ fi
 
 # Scripts
 mkdir -p $HOME/.local/bin
+cp -r $DOT_FILES/Scripts/* $HOME/.local/bin/
 
 # Looki looki if reboot is needy needy
 if [ -f /var/run/reboot-required ]; then
