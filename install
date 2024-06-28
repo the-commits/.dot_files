@@ -8,7 +8,7 @@ EPOCH=$(date +%s%N)
 ARCHIVE=$DOT_FILES/archive/$EPOCH
 NERD_FONT_VERSION="3.1.1"
 TMUX_VERSION="3.4"
-REQUIREMENTS=(sudo curl make unzip autoconf automake libtoolize pkg-config bison)
+REQUIREMENTS=(sudo curl make cmake unzip autoconf automake libtoolize pkg-config bison python3)
 # Check if commands exist
 function check_commands {
 	local commands=("$@")
@@ -24,72 +24,33 @@ function check_commands {
 function suggest_install_command {
 	local cmd=$1
 	case "$cmd" in
-	make | autoconf | automake | libtoolize | pkg-config | libevent-dev | bison | ncurses)
-		if [ "$machine" == "Linux" ]; then
-			if command -v apt-get &>/dev/null; then
-				case "$cmd" in
-				make)
-					echo "You can install $cmd using: sudo apt-get update && sudo apt-get install build-essential"
-					;;
-				autoconf | automake | libtoolize | pkg-config | libevent-dev | bison | ncurses)
-					echo "You can install $cmd using: sudo apt-get update && sudo apt-get install $cmd"
-					;;
-				esac
-			elif command -v apt &>/dev/null; then
-				case "$cmd" in
-				make)
-					echo "You can install $cmd using: sudo apt update && sudo apt install build-essential"
-					;;
-				autoconf | automake | libtoolize | pkg-config | libevent-dev | bison | ncurses)
-					echo "You can install $cmd using: sudo apt update && sudo apt install $cmd"
-					;;
-				esac
-			elif command -v yum &>/dev/null; then
-				case "$cmd" in
-				make)
-					echo "You can install $cmd using: sudo yum groupinstall 'Development Tools'"
-					;;
-				autoconf | automake | libtoolize | pkg-config | libevent-dev | bison | ncurses)
-					echo "You can install $cmd using: sudo yum install $cmd"
-					;;
-				esac
-			elif command -v dnf &>/dev/null; then
-				case "$cmd" in
-				make)
-					echo "You can install $cmd using: sudo dnf groupinstall 'Development Tools'"
-					;;
-				autoconf | automake | libtoolize | pkg-config | libevent-dev | bison | ncurses)
-					echo "You can install $cmd using: sudo dnf install $cmd"
-					;;
-				esac
-			elif command -v zypper &>/dev/null; then
-				case "$cmd" in
-				make)
-					echo "You can install $cmd using: sudo zypper install -t pattern devel_basis"
-					;;
-				autoconf | automake | libtoolize | pkg-config | libevent-dev | bison | ncurses)
-					echo "You can install $cmd using: sudo zypper install $cmd"
-					;;
-				esac
-			else
-				echo "Please install $cmd using your package manager."
-			fi
-		elif [ "$machine" == "Mac" ]; then
-			case "$cmd" in
-			make | autoconf | automake | libtoolize | pkg-config)
-				echo "You can install $cmd using: brew install $cmd"
-				;;
-			libevent-dev)
-				echo "You can install $cmd using: brew install libevent"
-				;;
-			bison)
-				echo "You can install $cmd using: brew install bison"
-				;;
-			ncurses)
-				echo "You can install $cmd using: brew install ncurses"
-				;;
-			esac
-		fi
+	make)
+		echo "You can install $cmd using: sudo apt-get update && sudo apt-get install build-essential"
+		;;
+	autoconf | automake | libtoolize | pkg-config | libevent-dev | bison | ncurses-dev | build-essential | cmake | libfreetype6-dev | libfontconfig1-dev | libxcb-xfixes0-dev | libxkbcommon-dev | python3)
+		case "$(command -v apt-get apt yum dnf zypper brew)" in
+		apt-get)
+			echo "You can install $cmd using: sudo apt-get update && sudo apt-get install $cmd"
+			;;
+		apt)
+			echo "You can install $cmd using: sudo apt update && sudo apt install $cmd"
+			;;
+		yum)
+			echo "You can install $cmd using: sudo yum install $cmd"
+			;;
+		dnf)
+			echo "You can install $cmd using: sudo dnf install $cmd"
+			;;
+		zypper)
+			echo "You can install $cmd using: sudo zypper install $cmd"
+			;;
+		brew)
+			echo "You can install $cmd using: brew install $cmd"
+			;;
+		*)
+			echo "Please install $cmd using your package manager."
+			;;
+		esac
 		;;
 	*)
 		echo "Please install $cmd using your package manager."
