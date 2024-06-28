@@ -24,18 +24,15 @@ function check_commands {
 function suggest_install_command {
 	local cmd=$1
 	case "$cmd" in
-	make | autoconf | automake | libtoolize | pkg-config | libevent-dev | bison)
+	make | autoconf | automake | libtoolize | pkg-config | libevent-dev | bison | ncurses)
 		if [ "$machine" == "Linux" ]; then
 			if command -v apt-get &>/dev/null; then
 				case "$cmd" in
 				make)
 					echo "You can install $cmd using: sudo apt-get update && sudo apt-get install build-essential"
 					;;
-				autoconf | automake | libtoolize | pkg-config | libevent-dev)
+				autoconf | automake | libtoolize | pkg-config | libevent-dev | bison | ncurses)
 					echo "You can install $cmd using: sudo apt-get update && sudo apt-get install $cmd"
-					;;
-				bison)
-					echo "You can install $cmd using: sudo apt-get update && sudo apt-get install bison"
 					;;
 				esac
 			elif command -v apt &>/dev/null; then
@@ -43,11 +40,8 @@ function suggest_install_command {
 				make)
 					echo "You can install $cmd using: sudo apt update && sudo apt install build-essential"
 					;;
-				autoconf | automake | libtoolize | pkg-config | libevent-dev)
+				autoconf | automake | libtoolize | pkg-config | libevent-dev | bison | ncurses)
 					echo "You can install $cmd using: sudo apt update && sudo apt install $cmd"
-					;;
-				bison)
-					echo "You can install $cmd using: sudo apt update && sudo apt install bison"
 					;;
 				esac
 			elif command -v yum &>/dev/null; then
@@ -55,11 +49,8 @@ function suggest_install_command {
 				make)
 					echo "You can install $cmd using: sudo yum groupinstall 'Development Tools'"
 					;;
-				autoconf | automake | libtoolize | pkg-config | libevent-dev)
+				autoconf | automake | libtoolize | pkg-config | libevent-dev | bison | ncurses)
 					echo "You can install $cmd using: sudo yum install $cmd"
-					;;
-				bison)
-					echo "You can install $cmd using: sudo yum install bison"
 					;;
 				esac
 			elif command -v dnf &>/dev/null; then
@@ -67,11 +58,8 @@ function suggest_install_command {
 				make)
 					echo "You can install $cmd using: sudo dnf groupinstall 'Development Tools'"
 					;;
-				autoconf | automake | libtoolize | pkg-config | libevent-dev)
+				autoconf | automake | libtoolize | pkg-config | libevent-dev | bison | ncurses)
 					echo "You can install $cmd using: sudo dnf install $cmd"
-					;;
-				bison)
-					echo "You can install $cmd using: sudo dnf install bison"
 					;;
 				esac
 			elif command -v zypper &>/dev/null; then
@@ -79,11 +67,8 @@ function suggest_install_command {
 				make)
 					echo "You can install $cmd using: sudo zypper install -t pattern devel_basis"
 					;;
-				autoconf | automake | libtoolize | pkg-config | libevent-dev)
+				autoconf | automake | libtoolize | pkg-config | libevent-dev | bison | ncurses)
 					echo "You can install $cmd using: sudo zypper install $cmd"
-					;;
-				bison)
-					echo "You can install $cmd using: sudo zypper install bison"
 					;;
 				esac
 			else
@@ -99,6 +84,9 @@ function suggest_install_command {
 				;;
 			bison)
 				echo "You can install $cmd using: brew install bison"
+				;;
+			ncurses)
+				echo "You can install $cmd using: brew install ncurses"
 				;;
 			esac
 		fi
