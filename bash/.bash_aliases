@@ -1,3 +1,4 @@
+#!/bin/bash
 # NeoVim Aliases
 # alias vim="nvim"
 alias vi="nvim"

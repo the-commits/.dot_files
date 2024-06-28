@@ -9,6 +9,17 @@ ARCHIVE=$DOT_FILES/archive/$EPOCH
 NERD_FONT_VERSION="3.1.1"
 TMUX_VERSION="3.4"
 REQUIREMENTS=(sudo curl make unzip autoconf automake libtoolize pkg-config bison python3)
+function confirm {
+	read -r -p "${1:-Are you sure? [y/N]} " response
+	case "$response" in
+	[yY][eE][sS] | [yY])
+		true
+		;;
+	*)
+		false
+		;;
+	esac
+}
 # Check if commands exist
 function check_commands {
 	local commands=("$@")
@@ -57,6 +68,15 @@ function suggest_install_command {
 		;;
 	esac
 }
+# Remove brew if existing
+function remove_brew {
+	if [ -d /home/linuxbrew/ ]; then
+		test -d $HOME/.linuxbrew && eval "$($HOME/.linuxbrew/bin/brew shellenv)"
+		test -d /home/linuxbrew/.linuxbrew && eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+		/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/uninstall.sh)"
+		sudo rm -rf /home/linuxbrew
+	fi
+}
 function init {
 	# Check machine
 	unameOut="$(uname -s)"
@@ -74,27 +94,17 @@ function init {
 		echo "$machine is not added yet"
 		exit 1
 	fi
-	check_commands "${REQUIREMENTS[@]}"
-}
-function confirm {
-	read -r -p "${1:-Are you sure? [y/N]} " response
-	case "$response" in
-	[yY][eE][sS] | [yY])
-		true
-		;;
-	*)
-		false
-		;;
-	esac
-}
-# Remove brew if existing
-function remove_brew {
-	if [ -d /home/linuxbrew/ ]; then
-		test -d $HOME/.linuxbrew && eval "$($HOME/.linuxbrew/bin/brew shellenv)"
-		test -d /home/linuxbrew/.linuxbrew && eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-		/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/uninstall.sh)"
-		sudo rm -rf /home/linuxbrew
+
+	if [ -x "$(command -v apt)" ]; then
+		remove_brew
+		confirm "Do you want to install the requirements[y/N]" &&
+			sudo apt update -y &&
+			sudo apt upgrade -y &&
+			sudo apt install libevent-dev ncurses-dev build-essential bison pkg-config cmake pkg-config libfreetype6-dev libfontconfig1-dev libxcb-xfixes0-dev libxkbcommon-dev python3 &&
+			sudo apt autoremove -y
 	fi
+
+	check_commands "${REQUIREMENTS[@]}"
 }
 ##############################
 # All Nerd Fonts	     #
@@ -216,77 +226,60 @@ function install_tmux {
 	fi
 	ln -sf $DOT_FILES/tmux/tmux.conf $HOME/.tmux.conf
 }
-
+# Install Neovim
+function install_neovim {
+	# Remove pre-existing nvim conf
+	rm -rf $HOME/.local/share/nvim
+	rm -rf $HOME/.local/state/nvim
+	rm -rf $HOME/.cache/nvim
+	if [ -d $CONFIG_PATH/nvim ]; then
+		rm -rf $CONFIG_PATH/nvim
+	fi
+	mkdir -p $CONFIG_PATH/nvim
+	curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim-linux64.tar.gz
+	sudo rm -rf /opt/nvim
+	sudo tar -C /opt -xzf nvim-linux64.tar.gz
+	rm nvim-linux64.tar.gz
+}
+# Lazyvim
+function install_lazyvim {
+	install_neovim
+	curl -Lso lazyvim.zip https://github.com/LazyVim/starter/archive/refs/heads/main.zip && unzip lazyvim.zip -d lazyvim
+	cp -ra $DOT_FILES/lazyvim/starter-main/* $CONFIG_PATH/nvim/
+	rm lazyvim.zip
+	if [ -d $DOT_FILES/nvim ]; then
+		ln -sf $DOT_FILES/nvim/lua/user/plugins/* $CONFIG_PATH/nvim/lua/plugins/
+		ln -sf $DOT_FILES/nvim/lua/user/config/* $CONFIG_PATH/nvim/lua/config/
+	fi
+}
+# Install Anaconda
+function install_anaconda {
+	curl -Lso anaconda.installer.sh https://repo.anaconda.com/archive/Anaconda3-2023.09-0-Linux-x86_64.sh
+	bash anaconda.installer.sh
+	rm anaconda.installer.sh
+}
+# Lazygit
+function install_lazygit {
+	LAZYGIT_VERSION=$(curl -s "https://api.github.com/repos/jesseduffield/lazygit/releases/latest" | grep -Po '"tag_name": "v\K[^"]*')
+	curl -Lso lazygit.tar.gz "https://github.com/jesseduffield/lazygit/releases/latest/download/lazygit_${LAZYGIT_VERSION}_Linux_x86_64.tar.gz"
+	tar xf lazygit.tar.gz lazygit
+	sudo install lazygit /usr/local/bin
+	rm -rf lazygit*
+}
 init
 confirm "Configurate bash files? [y/N]" && install_bash
 confirm "Do you want to install the nerd fonts?[y/N]" && install_nerd_fonts
 confirm "Do you want to install tmux?[y/N]" && install_tmux
-exit 0
-
-# Remove brew if apt or snap is available
-if [ -x "$(command -v apt)" ]; then
-	remove_brew
-	sudo apt update -y
-	sudo apt upgrade -y
-	sudo apt install libevent-dev ncurses-dev build-essential bison pkg-config tmux neofetch cmake pkg-config libfreetype6-dev libfontconfig1-dev libxcb-xfixes0-dev libxkbcommon-dev python3
-	sudo apt autoremove -y
-fi
+confirm "Do you want to install NeoVim?" && install_neovim
+confirm "Do you want to install Lazyvim?" && install_lazyvim
+confirm "Do you want to install Rust?" && install_rust
+confirm "Do you want to install Anaconda?" && install_anaconda
+confirm "Do you want to install Lazygit?" && install_lazygit
 
 if [ -x "$(command -v snap)" ]; then
 	remove_brew
-	sudo snap install alacritty --classic
+	confirm "Do you want to install alacritty[y/N]" && sudo snap install alacritty --classic
 fi
-
-# Neofetch
-if [ -d $CONFIG_PATH/neofetch ]; then
-	rm -rf $CONFIG_PATH/neofetch
-fi
-ln -sf $DOT_FILES/neofetch $CONFIG_PATH
-
-# Neofetch
-if [ -d $CONFIG_PATH/neofetch ]; then
-	rm -rf $CONFIG_PATH/neofetch
-fi
-ln -sf $DOT_FILES/neofetch $CONFIG_PATH
-
-# NeoVim
-curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim-linux64.tar.gz
-sudo rm -rf /opt/nvim
-sudo tar -C /opt -xzf nvim-linux64.tar.gz
-rm nvim-linux64.tar.gz
-
-if [ -d $CONFIG_PATH/nvim ]; then
-	rm -rf $CONFIG_PATH/nvim
-fi
-
-mkdir -p $CONFIG_PATH/nvim
-
-# Lazyvim
-curl -Lso lazyvim.zip https://github.com/LazyVim/starter/archive/refs/heads/main.zip && unzip lazyvim.zip -d lazyvim
-cp -ra $DOT_FILES/lazyvim/starter-main/* $CONFIG_PATH/nvim/
-rm lazyvim.zip
-
-if [ -d $DOT_FILES/nvim ]; then
-	ln -sf $DOT_FILES/nvim/lua/user/plugins/* $CONFIG_PATH/nvim/lua/plugins/
-	ln -sf $DOT_FILES/nvim/lua/user/config/* $CONFIG_PATH/nvim/lua/config/
-fi
-
-# Install Anaconda
-curl -Lso anaconda.installer.sh https://repo.anaconda.com/archive/Anaconda3-2023.09-0-Linux-x86_64.sh
-bash anaconda.installer.sh
-rm anaconda.installer.sh
-
-# Remove pre-existing nvim conf
-rm -rf $HOME/.local/share/nvim
-rm -rf $HOME/.local/state/nvim
-rm -rf $HOME/.cache/nvim
-
-# Lazygit
-LAZYGIT_VERSION=$(curl -s "https://api.github.com/repos/jesseduffield/lazygit/releases/latest" | grep -Po '"tag_name": "v\K[^"]*')
-curl -Lso lazygit.tar.gz "https://github.com/jesseduffield/lazygit/releases/latest/download/lazygit_${LAZYGIT_VERSION}_Linux_x86_64.tar.gz"
-tar xf lazygit.tar.gz lazygit
-sudo install lazygit /usr/local/bin
-rm -rf lazygit*
 
 # Scripts
 mkdir -p $HOME/.local/bin
@@ -296,3 +289,5 @@ if [ -f /var/run/reboot-required ]; then
 	echo 'reboot required'
 	sudo reboot
 fi
+
+exit 0

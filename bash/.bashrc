@@ -99,8 +99,10 @@ fi
 
 # Add local bins
 export PATH=$PATH:/$HOME/.local/bin
-export PACKAGES=/home/mangebang/projects/.dot_files/packages
 export PATH="$PATH:/opt/nvim-linux64/bin"
+if [ -d $HOME/projects/.dot_files/packages ]; then
+	export PACKAGES=$HOME/projects/.dot_files/packages
+fi
 
 # enable programmable completion features (you don't need to enable
 # this, if it's already enabled in /etc/bash.bashrc and /etc/profile
@@ -112,20 +114,6 @@ if ! shopt -oq posix; then
 		. /etc/bash_completion
 	fi
 fi
-# >>> conda initialize >>>
-# !! Contents within this block are managed by 'conda init' !!
-__conda_setup="$('/home/mangebang/anaconda3/bin/conda' 'shell.bash' 'hook' 2>/dev/null)"
-if [ $? -eq 0 ]; then
-	eval "$__conda_setup"
-else
-	if [ -f "/home/mangebang/anaconda3/etc/profile.d/conda.sh" ]; then
-		. "/home/mangebang/anaconda3/etc/profile.d/conda.sh"
-	else
-		export PATH="/home/mangebang/anaconda3/bin:$PATH"
-	fi
-fi
-unset __conda_setup
-# <<< conda initialize <<<
 . "$HOME/.cargo/env"
 export RUSTUP_HOME="$HOME/.rustup"
 export CARGO_HOME="$HOME/.cargo"
