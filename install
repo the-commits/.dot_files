@@ -8,7 +8,7 @@ EPOCH=$(date +%s%N)
 ARCHIVE=$DOT_FILES/archive/$EPOCH
 NERD_FONT_VERSION="3.1.1"
 TMUX_VERSION="3.4"
-REQUIREMENTS=(sudo curl make unzip autoconf automake libtoolize pkg-config bison python3)
+REQUIREMENTS=(sudo curl make unzip autoconf automake libtoolize pkg-config bison python3 git)
 function confirm {
 	read -r -p "${1:-Are you sure? [y/N]} " response
 	case "$response" in
@@ -38,7 +38,7 @@ function suggest_install_command {
 	make)
 		echo "You can install $cmd using: sudo apt-get update && sudo apt-get install build-essential"
 		;;
-	autoconf | automake | libtoolize | pkg-config | libevent-dev | bison | ncurses-dev | build-essential | cmake | libfreetype6-dev | libfontconfig1-dev | libxcb-xfixes0-dev | libxkbcommon-dev | python3)
+	autoconf | automake | libtoolize | pkg-config | libevent-dev | bison | ncurses-dev | build-essential | cmake | libfreetype6-dev | libfontconfig1-dev | libxcb-xfixes0-dev | libxkbcommon-dev | python3 | git)
 		case "$(command -v apt-get apt yum dnf zypper brew)" in
 		apt-get)
 			echo "You can install $cmd using: sudo apt-get update && sudo apt-get install $cmd"
@@ -100,7 +100,7 @@ function init {
 		confirm "Do you want to install the requirements[y/N]" &&
 			sudo apt update -y &&
 			sudo apt upgrade -y &&
-			sudo apt install libevent-dev ncurses-dev build-essential bison pkg-config cmake pkg-config libfreetype6-dev libfontconfig1-dev libxcb-xfixes0-dev libxkbcommon-dev python3 &&
+			sudo apt install libevent-dev ncurses-dev build-essential bison pkg-config cmake pkg-config libfreetype6-dev libfontconfig1-dev libxcb-xfixes0-dev libxkbcommon-dev python3 git &&
 			sudo apt autoremove -y
 	fi
 
@@ -246,6 +246,8 @@ function install_neovim {
 	sudo rm -rf /opt/nvim
 	sudo tar -C /opt -xzf nvim-linux64.tar.gz
 	rm nvim-linux64.tar.gz
+
+	git config --global core.editor "nvim"
 }
 # Lazyvim
 function install_lazyvim {
@@ -257,6 +259,7 @@ function install_lazyvim {
 		ln -sf $DOT_FILES/nvim/lua/user/plugins $CONFIG_PATH/nvim/lua/plugins
 		ln -sf $DOT_FILES/nvim/lua/user/config $CONFIG_PATH/nvim/lua/config
 	fi
+
 }
 # Install Anaconda
 function install_anaconda {
