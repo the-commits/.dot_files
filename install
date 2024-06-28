@@ -22,6 +22,7 @@ function init {
 	esac
 
 	echo "We are running on ${machine}"
+	install_unzip
 	if [[ ! "$machine" =~ ^(Linux|Mac)$ ]]; then
 		echo "$machine is not added yet"
 		exit 1
@@ -37,6 +38,15 @@ function confirm {
 		false
 		;;
 	esac
+}
+function install_unzip {
+	if [ ! command -v unzip ] ] &>/dev/null; then
+		curl -s -L http://ftp.info-zip.org/pub/infozip/src/unzip60.tgz
+		tar xf unzip60.tgz
+		cd unzip60
+		make -f unix/Makefile generic
+		sudo make prefix=/usr/local install
+	fi
 }
 # Remove brew if existing
 function remove_brew {
