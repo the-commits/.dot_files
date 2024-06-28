@@ -130,10 +130,11 @@ function install_nerd_fonts {
 }
 # Rust
 function install_rust {
-	if [ -f $HOME/.cargo/env ]; then
-		curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-		source "$HOME/.cargo/env"
+	if [ -d $HOME/.cargo ]; then
+		rm -rf $HOME/.cargo
 	fi
+	curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+	source "$HOME/.cargo/env"
 }
 # Bash
 function install_bash {
@@ -280,7 +281,7 @@ confirm "Do you want to install Lazyvim?[y/N]" && install_lazyvim
 confirm "Do you want to install Rust?[y/N]" && install_rust
 confirm "Do you want to install Anaconda?[y/N]" && install_anaconda
 confirm "Do you want to install Lazygit?[y/N]" && install_lazygit
-confirm "Install docker?[y\N]" && ./install_docker.sh
+confirm "Install docker?[y/N]" && ./install_docker.sh
 if [ -x "$(command -v snap)" ]; then
 	remove_brew
 	confirm "Do you want to install alacritty[y/N]" && sudo snap install alacritty --classic
