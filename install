@@ -12,15 +12,14 @@ REQUIREMENTS=(sudo curl make unzip)
 
 # Check if commands exist
 function check_commands {
-    local commands=("$@")
-    for cmd in "${commands[@]}"; then
-        if ! command -v "$cmd" &> /dev/null; then
-            echo "$cmd could not be found"
-            exit 1
-        fi
-    done
+	local commands=("$@")
+	for cmd in "${commands[@]}"; do
+		if [ ! command -v "$cmd" ] &>/dev/null; then
+			echo "$cmd could not be found"
+			exit 1
+		fi
+	done
 }
-
 function init {
 	# Check machine
 	unameOut="$(uname -s)"
@@ -38,7 +37,7 @@ function init {
 		echo "$machine is not added yet"
 		exit 1
 	fi
-  check_commands "${REQUIREMENTS[@]}"
+	check_commands "${REQUIREMENTS[@]}"
 }
 function confirm {
 	read -r -p "${1:-Are you sure? [y/N]} " response
@@ -50,13 +49,6 @@ function confirm {
 		false
 		;;
 	esac
-}
-function install_unzip {
-	curl -s -L http://ftp.info-zip.org/pub/infozip/src/unzip60.tgz
-	tar xf unzip60.tgz
-	cd unzip60
-	make -f unix/Makefile generic
-	sudo make prefix=/usr/local install
 }
 # Remove brew if existing
 function remove_brew {
@@ -189,7 +181,6 @@ function install_tmux {
 }
 
 init
-install_unzip
 confirm "Configurate bash files? [y/N]" && install_bash
 confirm "Do you want to install the nerd fonts?[y/N]" && install_nerd_fonts
 confirm "Do you want to install tmux?[y/N]" && install_tmux
