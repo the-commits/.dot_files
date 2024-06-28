@@ -289,8 +289,8 @@ fi
 
 # Scripts
 mkdir -p $HOME/.local/bin
-if [ -d $DOT_FILES/Scripts ]; then
-	cp -r $DOT_FILES/Scripts/* $HOME/.local/bin/
+if [ -d $DOT_FILES/scripts ]; then
+	cp -r $DOT_FILES/scripts/* $HOME/.local/bin/
 fi
 # Looki looki if reboot is needy needy
 if [ -f /var/run/reboot-required ]; then
