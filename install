@@ -284,6 +284,10 @@ fi
 # Scripts
 mkdir -p $HOME/.local/bin
 cp -r $DOT_FILES/Scripts/* $HOME/.local/bin/
+if [ -d $HOME/.tmux_scripts ]; then
+	rm -rf $HOME/.tmux_scripts
+fi
+ln -sf $DOT_FILES/tmux-scripts $HOME/.tmux_scripts
 
 # Looki looki if reboot is needy needy
 if [ -f /var/run/reboot-required ]; then
