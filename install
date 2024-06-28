@@ -8,7 +8,7 @@ EPOCH=$(date +%s%N)
 ARCHIVE=$DOT_FILES/archive/$EPOCH
 NERD_FONT_VERSION="3.1.1"
 TMUX_VERSION="3.4"
-REQUIREMENTS=(sudo curl make unzip autoconf automake libtoolize pkg-config)
+REQUIREMENTS=(sudo curl make unzip autoconf automake libtoolize pkg-config bison)
 # Check if commands exist
 function check_commands {
 	local commands=("$@")
@@ -24,38 +24,83 @@ function check_commands {
 function suggest_install_command {
 	local cmd=$1
 	case "$cmd" in
-	make)
+	make | autoconf | automake | libtoolize | pkg-config | libevent-dev | bison)
 		if [ "$machine" == "Linux" ]; then
-			if command -v apt &>/dev/null; then
-				echo "You can install $cmd using: sudo apt update && sudo apt install build-essential"
+			if command -v apt-get &>/dev/null; then
+				case "$cmd" in
+				make)
+					echo "You can install $cmd using: sudo apt-get update && sudo apt-get install build-essential"
+					;;
+				autoconf | automake | libtoolize | pkg-config | libevent-dev)
+					echo "You can install $cmd using: sudo apt-get update && sudo apt-get install $cmd"
+					;;
+				bison)
+					echo "You can install $cmd using: sudo apt-get update && sudo apt-get install bison"
+					;;
+				esac
+			elif command -v apt &>/dev/null; then
+				case "$cmd" in
+				make)
+					echo "You can install $cmd using: sudo apt update && sudo apt install build-essential"
+					;;
+				autoconf | automake | libtoolize | pkg-config | libevent-dev)
+					echo "You can install $cmd using: sudo apt update && sudo apt install $cmd"
+					;;
+				bison)
+					echo "You can install $cmd using: sudo apt update && sudo apt install bison"
+					;;
+				esac
 			elif command -v yum &>/dev/null; then
-				echo "You can install $cmd using: sudo yum groupinstall 'Development Tools'"
+				case "$cmd" in
+				make)
+					echo "You can install $cmd using: sudo yum groupinstall 'Development Tools'"
+					;;
+				autoconf | automake | libtoolize | pkg-config | libevent-dev)
+					echo "You can install $cmd using: sudo yum install $cmd"
+					;;
+				bison)
+					echo "You can install $cmd using: sudo yum install bison"
+					;;
+				esac
 			elif command -v dnf &>/dev/null; then
-				echo "You can install $cmd using: sudo dnf groupinstall 'Development Tools'"
+				case "$cmd" in
+				make)
+					echo "You can install $cmd using: sudo dnf groupinstall 'Development Tools'"
+					;;
+				autoconf | automake | libtoolize | pkg-config | libevent-dev)
+					echo "You can install $cmd using: sudo dnf install $cmd"
+					;;
+				bison)
+					echo "You can install $cmd using: sudo dnf install bison"
+					;;
+				esac
 			elif command -v zypper &>/dev/null; then
-				echo "You can install $cmd using: sudo zypper install -t pattern devel_basis"
+				case "$cmd" in
+				make)
+					echo "You can install $cmd using: sudo zypper install -t pattern devel_basis"
+					;;
+				autoconf | automake | libtoolize | pkg-config | libevent-dev)
+					echo "You can install $cmd using: sudo zypper install $cmd"
+					;;
+				bison)
+					echo "You can install $cmd using: sudo zypper install bison"
+					;;
+				esac
 			else
 				echo "Please install $cmd using your package manager."
 			fi
 		elif [ "$machine" == "Mac" ]; then
-			echo "You can install $cmd using: xcode-select --install"
-		fi
-		;;
-	autoconf | automake | libtoolize | pkg-config | libevent-dev)
-		if [ "$machine" == "Linux" ]; then
-			if command -v apt &>/dev/null; then
-				echo "You can install $cmd using: sudo apt update && sudo apt install autoconf automake libtool pkg-config libevent-dev"
-			elif command -v yum &>/dev/null; then
-				echo "You can install $cmd using: sudo yum install autoconf automake libtool pkg-config libevent-devel"
-			elif command -v dnf &>/dev/null; then
-				echo "You can install $cmd using: sudo dnf install autoconf automake libtool pkg-config libevent-devel"
-			elif command -v zypper &>/dev/null; then
-				echo "You can install $cmd using: sudo zypper install autoconf automake libtool pkg-config libevent-devel"
-			else
-				echo "Please install $cmd using your package manager."
-			fi
-		elif [ "$machine" == "Mac" ]; then
-			echo "You can install $cmd using: brew install autoconf automake libtool pkg-config libevent"
+			case "$cmd" in
+			make | autoconf | automake | libtoolize | pkg-config)
+				echo "You can install $cmd using: brew install $cmd"
+				;;
+			libevent-dev)
+				echo "You can install $cmd using: brew install libevent"
+				;;
+			bison)
+				echo "You can install $cmd using: brew install bison"
+				;;
+			esac
 		fi
 		;;
 	*)
