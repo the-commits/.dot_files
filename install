@@ -7,24 +7,67 @@ NVIM_PLUGINS=$NVIM_CONFIG/lua/plugins
 EPOCH=$(date +%s%N)
 ARCHIVE=$DOT_FILES/archive/$EPOCH
 NERD_FONT_VERSION="3.1.1"
-
-# Check machine
-unameOut="$(uname -s)"
-case "${unameOut}" in
-Linux*) machine=Linux ;;
-Darwin*) machine=Mac ;;
-CYGWIN*) machine=Cygwin ;;
-MINGW*) machine=MinGw ;;
-MSYS_NT*) machine=Git ;;
-*) machine="UNKNOWN:${unameOut}" ;;
-esac
-
-echo "We are running on ${machine}"
-if [[ ! "$machine" =~ ^(Linux|Mac)$ ]]; then
-	echo "$machine is not added yet"
-	exit 1
-fi
-
+TMUX_VERSION="3.4"
+REQUIREMENTS=(sudo curl make unzip autoconf automake libtoolize pkg-config bison python3)
+function confirm {
+	read -r -p "${1:-Are you sure? [y/N]} " response
+	case "$response" in
+	[yY][eE][sS] | [yY])
+		true
+		;;
+	*)
+		false
+		;;
+	esac
+}
+# Check if commands exist
+function check_commands {
+	local commands=("$@")
+	for cmd in "${commands[@]}"; do
+		if ! command -v "$cmd" &>/dev/null; then
+			echo "$cmd needs to be installed"
+			suggest_install_command "$cmd"
+			exit 1
+		fi
+	done
+}
+# Suggest install command based on package manager
+function suggest_install_command {
+	local cmd=$1
+	case "$cmd" in
+	make)
+		echo "You can install $cmd using: sudo apt-get update && sudo apt-get install build-essential"
+		;;
+	autoconf | automake | libtoolize | pkg-config | libevent-dev | bison | ncurses-dev | build-essential | cmake | libfreetype6-dev | libfontconfig1-dev | libxcb-xfixes0-dev | libxkbcommon-dev | python3)
+		case "$(command -v apt-get apt yum dnf zypper brew)" in
+		apt-get)
+			echo "You can install $cmd using: sudo apt-get update && sudo apt-get install $cmd"
+			;;
+		apt)
+			echo "You can install $cmd using: sudo apt update && sudo apt install $cmd"
+			;;
+		yum)
+			echo "You can install $cmd using: sudo yum install $cmd"
+			;;
+		dnf)
+			echo "You can install $cmd using: sudo dnf install $cmd"
+			;;
+		zypper)
+			echo "You can install $cmd using: sudo zypper install $cmd"
+			;;
+		brew)
+			echo "You can install $cmd using: brew install $cmd"
+			;;
+		*)
+			echo "Please install $cmd using your package manager."
+			;;
+		esac
+		;;
+	*)
+		echo "Please install $cmd using your package manager."
+		;;
+	esac
+}
 # Remove brew if existing
 function remove_brew {
 	if [ -d /home/linuxbrew/ ]; then
@@ -34,137 +77,222 @@ function remove_brew {
 		sudo rm -rf /home/linuxbrew
 	fi
 }
+function init {
+	# Check machine
+	unameOut="$(uname -s)"
+	case "${unameOut}" in
+	Linux*) machine=Linux ;;
+	Darwin*) machine=Mac ;;
+	CYGWIN*) machine=Cygwin ;;
+	MINGW*) machine=MinGw ;;
+	MSYS_NT*) machine=Git ;;
+	*) machine="UNKNOWN:${unameOut}" ;;
+	esac
 
+	echo "We are running on ${machine}"
+	if [[ ! "$machine" =~ ^(Linux|Mac)$ ]]; then
+		echo "$machine is not added yet"
+		exit 1
+	fi
+
+	if [ -x "$(command -v apt)" ]; then
+		remove_brew
+		confirm "Do you want to install the requirements[y/N]" &&
+			sudo apt update -y &&
+			sudo apt upgrade -y &&
+			sudo apt install libevent-dev ncurses-dev build-essential bison pkg-config cmake pkg-config libfreetype6-dev libfontconfig1-dev libxcb-xfixes0-dev libxkbcommon-dev python3 &&
+			sudo apt autoremove -y
+	fi
+
+	check_commands "${REQUIREMENTS[@]}"
+}
 ##############################
 # All Nerd Fonts	     #
 ##############################
-function dl_all_nerd_fonts {
+function install_nerd_fonts {
 	mkdir -p $DOT_FILES/fonts
-	curl -s -L -o $DOT_FILES/fonts/NerdFonts_$NERD_FONT_VERSION.zip -A "Mozilla/5.0" https://github.com/ryanoasis/nerd-fonts/archive/refs/tags/v$NERD_FONT_VERSION.zip
 	if [ -d $DOT_FILES/fonts/ ]; then
-		unzip $DOT_FILES/fonts/NerdFonts_$NERD_FONT_VERSION.zip
-		cd $DOT_FILES/fonts/nerd-fonts-$NERD_FONT_VERSION && ./install.sh
-		cd $DOT_FILES
-		rm $DOT_FILES/fonts/NerdFonts_$NERD_FONT_VERSION.zip
-		rm -rf $DOT_FILES/fonts/nerd-fonts-$NERD_FONT_VERSION
+		if [ ! -f $DOT_FILES/fonts/NerdFonts_v$NERD_FONT_VERSION.zip ]; then
+			curl -s -L -o "$DOT_FILES/fonts/NerdFonts_v$NERD_FONT_VERSION.zip" -A "Mozilla/5.0" https://github.com/ryanoasis/nerd-fonts/archive/refs/tags/v$NERD_FONT_VERSION.zip
+		fi
+		if [ -f "$DOT_FILES/fonts/NerdFonts_v$NERD_FONT_VERSION.zip" ]; then
+			mkdir -p $DOT_FILES/fonts/nerd-fonts-$NERD_FONT_VERSION
+			unzip "$DOT_FILES/fonts/NerdFonts_v$NERD_FONT_VERSION.zip" -d $DOT_FILES/fonts
+		fi
+		if [ -d $DOT_FILES/fonts/nerd-fonts-$NERD_FONT_VERSION ]; then
+			$DOT_FILES/fonts/nerd-fonts-$NERD_FONT_VERSION/install.sh
+		else
+			echo "Can not find nerd-fonts directory"
+			echo "$DOT_FILES/fonts/nerd-fonts-$NERD_FONT_VERSION"
+			exit 0
+		fi
 	fi
 }
-
 # Rust
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-source "$HOME/.cargo/env"
-
-if [[ $SHELL == *"bash"* ]]; then
-	# Bash
-	if [ -f $HOME/.bashrc ]; then
-		rm $HOME/.bashrc
+function install_rust {
+	if [ -f $HOME/.cargo/env ]; then
+		curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+		source "$HOME/.cargo/env"
 	fi
-	if [ -f $HOME/.bash_profile ]; then
-		rm $HOME/.bash_profile
+}
+# Bash
+function install_bash {
+	if [[ $SHELL == *"bash"* ]]; then
+		if [ -f $HOME/.bashrc ]; then
+			rm $HOME/.bashrc
+		fi
+		if [ -f $HOME/.bash_profile ]; then
+			rm $HOME/.bash_profile
+		fi
+		if [ -f $HOME/.bash_logout ]; then
+			rm $HOME/.bash_logout
+		fi
+		if [ -f $HOME/.bash_aliases ]; then
+			rm $HOME/.bash_aliases
+		fi
+		if [ -f $HOME/.bash_func ]; then
+			rm $HOME/.bash_func
+		fi
+		if [ -f $HOME/.bash_exports ]; then
+			rm $HOME/.bash_exports
+		fi
+		if [ -f $HOME/.bash_completion ]; then
+			rm $HOME/.bash_completion
+		fi
+		if [ -f $HOME/.secrets ]; then
+			rm $HOME/.secrets
+		fi
+		if [ -d $HOME/projects/.dot_files/packages ]; then
+			rm -rf $HOME/projects/.dot_files/packages
+		fi
+		if [ -d $HOME/.bash-git-prompt ]; then
+			rm -rf $HOME/.bash-git-prompt
+		fi
+		if [ -d $DOT_FILES/bash/packages ]; then
+			mkdir -p $HOME/projects/.dot_files/packages
+			ln -sf $DOT_FILES/bash/packages $HOME/projects/.dot_files/packages
+		fi
+		if [ -f $DOT_FILES/bash/.bash_exports ]; then
+			ln -sf $DOT_FILES/bash/.bash_exports $HOME/.bash_exports
+		fi
+		if [ -f $DOT_FILES/bash/.bash_completion ]; then
+			ln -sf $DOT_FILES/bash/.bash_completion $HOME/.bash_completion
+		fi
+		if [ -f $DOT_FILES/bash/.bash_aliases ]; then
+			ln -sf $DOT_FILES/bash/.bash_aliases $HOME/.bash_aliases
+		fi
+		if [ -f $DOT_FILES/bash/.bash_profile ]; then
+			ln -sf $DOT_FILES/bash/.bash_profile $HOME/.bash_profile
+		fi
+		if [ -f $DOT_FILES/bash/.bash_logout ]; then
+			ln -sf $DOT_FILES/bash/.bash_logout $HOME/.bash_logout
+		fi
+		if [ -f $DOT_FILES/bash/.bash_aliases ]; then
+			ln -sf $DOT_FILES/bash/.bash_aliases $HOME/.bash_aliases
+		fi
+		if [ -f $DOT_FILES/bash/.bash_func ]; then
+			ln -sf $DOT_FILES/bash/.bash_func $HOME/.bash_func
+		fi
+		if [ -f $DOT_FILES/bash/.secrets ]; then
+			ln -sf $DOT_FILES/bash/.secrets $HOME/.secrets
+		fi
+		if [ -f $DOT_FILES/bash/.bashrc ]; then
+			ln -sf $DOT_FILES/bash/.bashrc $HOME/.bashrc
+		fi
+		if [ -d $DOT_FILES/modules/.bash-git-prompt ]; then
+			rm -rf $DOT_FILES/modules/.bash-git-prompt
+		fi
+		mkdir -p $DOT_FILES/modules
+		git submodule add --force https://github.com/magicmonty/bash-git-prompt.git $DOT_FILES/modules/.bash-git-prompt
+		ln -sf $DOT_FILES/modules/.bash-git-prompt $HOME/.bash-git-prompt
+		source $DOT_FILES/bash/.bashrc $HOME/.bashrc
 	fi
-	if [ -f $HOME/.bash_logout ]; then
-		rm $HOME/.bash_logout
-	fi
-	if [ -f $HOME/.bash_aliases ]; then
-		rm $HOME/.bash_aliases
-	fi
-	if [ -f $HOME/.bash_func ]; then
-		rm $HOME/.bash_func
-	fi
-	if [ -f $HOME/.secrets ]; then
-		rm $HOME/.secrets
-	fi
-	ln -sf $DOT_FILES/bash/.bash_aliases $HOME/.bash_aliases
-	ln -sf $DOT_FILES/bash/.bashrc $HOME/.bashrc
-	ln -sf $DOT_FILES/bash/.bash_profile $HOME/.bash_profile
-	ln -sf $DOT_FILES/bash/.bash_logout $HOME/.bash_logout
-	ln -sf $DOT_FILES/bash/.bash_aliases $HOME/.bash_aliases
-	ln -sf $DOT_FILES/bash/.bash_func $HOME/.bash_func
-	if [ -f $DOT_FILES/bash/.secrets ]; then
-		ln -sf $DOT_FILES/bash/.secrets $HOME/.secrets
-	fi
-	source $DOT_FILES/bash/.bashrc $HOME/.bashrc
-fi
-
+}
 # tmux
-if [ -f $HOME/.tmux.conf ]; then
-	rm $HOME/.tmux.conf
-fi
-ln -sf $DOT_FILES/tmux/tmux.conf $HOME/.tmux.conf
+function install_tmux {
+	# https://github.com/tmux/tmux/wiki/Installing
+	mkdir -p $DOT_FILES/modules
+	rm -rf $DOT_FILES/modules/tmux
+	git submodule add --force https://github.com/tmux/tmux.git $DOT_FILES/modules/tmux
+	cd $DOT_FILES/modules/tmux
+	git fetch --all
+	git checkout tags/$TMUX_VERSION
+	sh autogen.sh
+	./configure
+	make && sudo make install
+	sudo ln -sf $DOT_FILES/modules/tmux /usr/local/bin/tmux
+	if [ -f $HOME/.tmux.conf ]; then
+		rm $HOME/.tmux.conf
+	fi
+	ln -sf $DOT_FILES/tmux/tmux.conf $HOME/.tmux.conf
+	if [ -d $HOME/.tmux_scripts ]; then
+		rm -rf $HOME/.tmux_scripts
+	fi
+	ln -sf $DOT_FILES/tmux-scripts $HOME/.tmux_scripts
 
-# Download fonts
-dl_all_nerd_fonts
-
-# Remove brew if apt or snap is available
-if [ -x "$(command -v apt)" ]; then
-	remove_brew
-	sudo apt update -y
-	sudo apt upgrade -y
-	sudo apt install libevent-dev ncurses-dev build-essential bison pkg-config tmux neofetch cmake pkg-config libfreetype6-dev libfontconfig1-dev libxcb-xfixes0-dev libxkbcommon-dev python3
-	sudo apt autoremove -y
-fi
-
+}
+# Install Neovim
+function install_neovim {
+	# Remove pre-existing nvim conf
+	rm -rf $HOME/.local/share/nvim
+	rm -rf $HOME/.local/state/nvim
+	rm -rf $HOME/.cache/nvim
+	if [ -d $CONFIG_PATH/nvim ]; then
+		rm -rf $CONFIG_PATH/nvim
+	fi
+	mkdir -p $CONFIG_PATH/nvim
+	curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim-linux64.tar.gz
+	sudo rm -rf /opt/nvim
+	sudo tar -C /opt -xzf nvim-linux64.tar.gz
+	rm nvim-linux64.tar.gz
+}
+# Lazyvim
+function install_lazyvim {
+	install_neovim
+	curl -Lso lazyvim.zip https://github.com/LazyVim/starter/archive/refs/heads/main.zip && unzip lazyvim.zip -d lazyvim
+	cp -ra $DOT_FILES/lazyvim/starter-main/* $CONFIG_PATH/nvim/
+	rm lazyvim.zip
+	if [ -d $DOT_FILES/nvim ]; then
+		ln -sf $DOT_FILES/nvim/lua/user/plugins/* $CONFIG_PATH/nvim/lua/plugins/
+		ln -sf $DOT_FILES/nvim/lua/user/config/* $CONFIG_PATH/nvim/lua/config/
+	fi
+}
+# Install Anaconda
+function install_anaconda {
+	curl -Lso anaconda.installer.sh https://repo.anaconda.com/archive/Anaconda3-2023.09-0-Linux-x86_64.sh
+	bash anaconda.installer.sh
+	rm anaconda.installer.sh
+}
+# Lazygit
+function install_lazygit {
+	LAZYGIT_VERSION=$(curl -s "https://api.github.com/repos/jesseduffield/lazygit/releases/latest" | grep -Po '"tag_name": "v\K[^"]*')
+	curl -Lso lazygit.tar.gz "https://github.com/jesseduffield/lazygit/releases/latest/download/lazygit_${LAZYGIT_VERSION}_Linux_x86_64.tar.gz"
+	tar xf lazygit.tar.gz lazygit
+	sudo install lazygit /usr/local/bin
+	rm -rf lazygit*
+}
+init
+confirm "Configurate bash files? [y/N]" && install_bash
+confirm "Do you want to install the nerd fonts?[y/N]" && install_nerd_fonts
+confirm "Do you want to install tmux?[y/N]" && install_tmux
+confirm "Do you want to install NeoVim?" && install_neovim
+confirm "Do you want to install Lazyvim?" && install_lazyvim
+confirm "Do you want to install Rust?" && install_rust
+confirm "Do you want to install Anaconda?" && install_anaconda
+confirm "Do you want to install Lazygit?" && install_lazygit
+confirm "Install docker?[y\N]" && ./install_docker.sh
 if [ -x "$(command -v snap)" ]; then
 	remove_brew
-	sudo snap install alacritty --classic
+	confirm "Do you want to install alacritty[y/N]" && sudo snap install alacritty --classic
 fi
-
-# Neofetch
-if [ -d $CONFIG_PATH/neofetch ]; then
-	rm -rf $CONFIG_PATH/neofetch
-fi
-ln -sf $DOT_FILES/neofetch $CONFIG_PATH
-
-# Neofetch
-if [ -d $CONFIG_PATH/neofetch ]; then
-	rm -rf $CONFIG_PATH/neofetch
-fi
-ln -sf $DOT_FILES/neofetch $CONFIG_PATH
-
-# NeoVim
-curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim-linux64.tar.gz
-sudo rm -rf /opt/nvim
-sudo tar -C /opt -xzf nvim-linux64.tar.gz
-rm nvim-linux64.tar.gz
-
-if [ -d $CONFIG_PATH/nvim ]; then
-	rm -rf $CONFIG_PATH/nvim
-fi
-
-mkdir -p $CONFIG_PATH/nvim
-
-# Lazyvim
-curl -Lso lazyvim.zip https://github.com/LazyVim/starter/archive/refs/heads/main.zip && unzip lazyvim.zip -d lazyvim
-cp -ra $DOT_FILES/lazyvim/starter-main/* $CONFIG_PATH/nvim/
-rm lazyvim.zip
-
-if [ -d $DOT_FILES/nvim ]; then
-	ln -sf $DOT_FILES/nvim/lua/user/plugins/* $CONFIG_PATH/nvim/lua/plugins/
-	ln -sf $DOT_FILES/nvim/lua/user/config/* $CONFIG_PATH/nvim/lua/config/
-fi
-
-# Install Anaconda
-curl -Lso anaconda.installer.sh https://repo.anaconda.com/archive/Anaconda3-2023.09-0-Linux-x86_64.sh
-bash anaconda.installer.sh
-rm anaconda.installer.sh
-
-# Remove pre-existing nvim conf
-rm -rf $HOME/.local/share/nvim
-rm -rf $HOME/.local/state/nvim
-rm -rf $HOME/.cache/nvim
-
-# Lazygit
-LAZYGIT_VERSION=$(curl -s "https://api.github.com/repos/jesseduffield/lazygit/releases/latest" | grep -Po '"tag_name": "v\K[^"]*')
-curl -Lso lazygit.tar.gz "https://github.com/jesseduffield/lazygit/releases/latest/download/lazygit_${LAZYGIT_VERSION}_Linux_x86_64.tar.gz"
-tar xf lazygit.tar.gz lazygit
-sudo install lazygit /usr/local/bin
-rm -rf lazygit*
 
 # Scripts
 mkdir -p $HOME/.local/bin
-
+cp -r $DOT_FILES/Scripts/* $HOME/.local/bin/
 # Looki looki if reboot is needy needy
 if [ -f /var/run/reboot-required ]; then
 	echo 'reboot required'
 	sudo reboot
 fi
+
+exit 0
