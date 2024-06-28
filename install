@@ -275,11 +275,11 @@ init
 confirm "Configurate bash files? [y/N]" && install_bash
 confirm "Do you want to install the nerd fonts?[y/N]" && install_nerd_fonts
 confirm "Do you want to install tmux?[y/N]" && install_tmux
-confirm "Do you want to install NeoVim?" && install_neovim
-confirm "Do you want to install Lazyvim?" && install_lazyvim
-confirm "Do you want to install Rust?" && install_rust
-confirm "Do you want to install Anaconda?" && install_anaconda
-confirm "Do you want to install Lazygit?" && install_lazygit
+confirm "Do you want to install NeoVim?[y/N]" && install_neovim
+confirm "Do you want to install Lazyvim?[y/N]" && install_lazyvim
+confirm "Do you want to install Rust?[y/N]" && install_rust
+confirm "Do you want to install Anaconda?[y/N]" && install_anaconda
+confirm "Do you want to install Lazygit?[y/N]" && install_lazygit
 confirm "Install docker?[y\N]" && ./install_docker.sh
 if [ -x "$(command -v snap)" ]; then
 	remove_brew
@@ -288,7 +288,9 @@ fi
 
 # Scripts
 mkdir -p $HOME/.local/bin
-cp -r $DOT_FILES/Scripts/* $HOME/.local/bin/
+if [ -d $DOT_FILES/Scripts ]; then
+	cp -r $DOT_FILES/Scripts/* $HOME/.local/bin/
+fi
 # Looki looki if reboot is needy needy
 if [ -f /var/run/reboot-required ]; then
 	echo 'reboot required'
