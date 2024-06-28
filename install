@@ -8,7 +8,7 @@ EPOCH=$(date +%s%N)
 ARCHIVE=$DOT_FILES/archive/$EPOCH
 NERD_FONT_VERSION="3.1.1"
 TMUX_VERSION="3.4"
-REQUIREMENTS=(sudo curl make unzip)
+REQUIREMENTS=(sudo curl make unzip autoconf automake libtool)
 # Check if commands exist
 function check_commands {
 	local commands=("$@")
@@ -39,6 +39,23 @@ function suggest_install_command {
 			fi
 		elif [ "$machine" == "Mac" ]; then
 			echo "You can install $cmd using: xcode-select --install"
+		fi
+		;;
+	autoconf | automake | libtool)
+		if [ "$machine" == "Linux" ]; then
+			if command -v apt &>/dev/null; then
+				echo "You can install $cmd using: sudo apt update && sudo apt install autoconf automake libtool"
+			elif command -v yum &>/dev/null; then
+				echo "You can install $cmd using: sudo yum install autoconf automake libtool"
+			elif command -v dnf &>/dev/null; then
+				echo "You can install $cmd using: sudo dnf install autoconf automake libtool"
+			elif command -v zypper &>/dev/null; then
+				echo "You can install $cmd using: sudo zypper install autoconf automake libtool"
+			else
+				echo "Please install $cmd using your package manager."
+			fi
+		elif [ "$machine" == "Mac" ]; then
+			echo "You can install $cmd using: brew install autoconf automake libtool"
 		fi
 		;;
 	*)
